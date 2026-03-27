@@ -75,8 +75,12 @@ Module lungeAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.
         settingsManager.rSetting(new Setting("Hostile Mobs", aimAssist, true));
         settingsManager.rSetting(new Setting("Passive Mobs", aimAssist, false));
 
-        settingsManager.rSetting(new Setting("Range", triggerbot, 4.25, 1.0, 6.0, false));
-        settingsManager.rSetting(new Setting("Min Delay (Ticks)", triggerbot, 1.0, 0.0, 20.0, true));
+        java.util.ArrayList<String> tbModes = new java.util.ArrayList<>();
+tbModes.add("Legit");
+tbModes.add("Blatant");
+settingsManager.rSetting(new Setting("Mode", triggerbot, "Legit", tbModes));
+settingsManager.rSetting(new Setting("Range", triggerbot, 4.25, 1.0, 6.0, false));
+settingsManager.rSetting(new Setting("Min Delay (Ticks)", triggerbot, 1.0, 0.0, 20.0, true));
         settingsManager.rSetting(new Setting("Max Delay (Ticks)", triggerbot, 4.0, 0.0, 20.0, true));
         settingsManager.rSetting(new Setting("Inventory Fix", triggerbot, true));
         settingsManager.rSetting(new Setting("Simulate Mouse Click", triggerbot, true)); 

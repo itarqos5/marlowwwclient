@@ -17,14 +17,18 @@ public class BindComp extends Comp {
 
     @Override
 public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-guiGraphics.fill((int)(parent.posX + x), (int)(parent.posY + y), (int)(parent.posX + x + 110), (int)(parent.posY + y + 15), new Color(30, 30, 30).getRGB());
+guiGraphics.fill((int)(parent.posX + x), (int)(parent.posY + y), (int)(parent.posX + x + 100), (int)(parent.posY + y + 14), new Color(30, 30, 30).getRGB());
+
+    if (listening) {
+        guiGraphics.fill((int)(parent.posX + x), (int)(parent.posY + y), (int)(parent.posX + x + 100), (int)(parent.posY + y + 14), new Color(230, 10, 230, 50).getRGB());
+    }
 
     String keyName = module.getKeyBind() == -1 ? "NONE" : GLFW.glfwGetKeyName(module.getKeyBind(), GLFW.glfwGetKeyScancode(module.getKeyBind()));
     if (keyName == null) keyName = String.valueOf(module.getKeyBind());
     if (module.getKeyBind() == GLFW.GLFW_KEY_RIGHT_SHIFT) keyName = "RSHIFT";
     
     String text = listening ? "Listening..." : "Bind: " + keyName.toUpperCase();
-    guiGraphics.drawString(Minecraft.getInstance().font, text, (int)(parent.posX + x + 4), (int)(parent.posY + y + 4), listening ? new Color(230, 10, 230).getRGB() : new Color(200, 200, 200).getRGB(), false);
+    guiGraphics.drawString(Minecraft.getInstance().font, text, (int)(parent.posX + x + 50) - (Minecraft.getInstance().font.width(text) / 2), (int)(parent.posY + y + 3), listening ? new Color(230, 10, 230).getRGB() : new Color(200, 200, 200).getRGB(), false);
 
     if (listening) {
 for (int i = 32; i <= 348; i++) {
@@ -45,10 +49,10 @@ break;
 
 @Override
 public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
-    if (isInside(mouseX, mouseY, parent.posX + x, parent.posY + y, parent.posX + x + 110, parent.posY + y + 15) && mouseButton == 0) {
-        listening = !listening;
-        Clickgui.playSound();
-    }
+if (isInside(mouseX, mouseY, parent.posX + x, parent.posY + y, parent.posX + x + 100, parent.posY + y + 14) && mouseButton == 0) {
+listening = !listening;
+Clickgui.playSound();
+}
 }
 
 }

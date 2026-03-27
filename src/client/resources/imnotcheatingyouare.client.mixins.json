@@ -9,7 +9,8 @@
 "LightTextureMixin",
 "MultiPlayerGameModeMixin",
 "ChatComponentMixin",
-"PlayerTabOverlayMixin"
+"PlayerTabOverlayMixin",
+"MinecraftAccessor"
 ],
   "injectors": {
     "defaultRequire": 1
