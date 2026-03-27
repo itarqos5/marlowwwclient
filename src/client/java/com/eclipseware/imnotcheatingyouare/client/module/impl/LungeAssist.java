@@ -33,8 +33,10 @@ if (mc.player == null || mc.getConnection() == null) return;
     mc.player.getInventory().setSelectedSlot(spearSlot);
     mc.getConnection().send(new ServerboundSetCarriedItemPacket(spearSlot));
     
-    // Punch the air
+    // Punch the air (send a UseItem packet to simulate the click)
     mc.player.swing(InteractionHand.MAIN_HAND);
+    // Send the actual packet that tells the server we used the item (left‑click attack)
+    mc.getConnection().send(new ServerboundUseItemPacket(InteractionHand.MAIN_HAND));
     
     // Immediately swap back in the same tick
     mc.player.getInventory().setSelectedSlot(oldSlot);
