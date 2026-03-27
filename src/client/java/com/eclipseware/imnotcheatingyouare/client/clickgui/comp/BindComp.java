@@ -27,32 +27,20 @@ guiGraphics.fill((int)(parent.posX + x), (int)(parent.posY + y), (int)(parent.po
     guiGraphics.drawString(Minecraft.getInstance().font, text, (int)(parent.posX + x + 4), (int)(parent.posY + y + 4), listening ? new Color(230, 10, 230).getRGB() : new Color(200, 200, 200).getRGB(), false);
 
     if (listening) {
-        long window = 0L;
-        try {
-            for (java.lang.reflect.Field f : Minecraft.getInstance().getWindow().getClass().getDeclaredFields()) {
-                if (f.getType() == long.class) {
-                    f.setAccessible(true);
-                    window = f.getLong(Minecraft.getInstance().getWindow());
-                    break;
-                }
-            }
-        } catch (Exception e) {}
-
-        if (window != 0L) {
-            for (int i = 32; i <= 348; i++) {
-                if (com.mojang.blaze3d.platform.InputConstants.isKeyDown(window, i)) {
-                    if (i == GLFW.GLFW_KEY_ESCAPE || i == GLFW.GLFW_KEY_BACKSPACE || i == GLFW.GLFW_KEY_DELETE) {
-                        module.setKeyBind(-1);
-                    } else {
-                        module.setKeyBind(i);
-                    }
-                    listening = false;
-                    Clickgui.playSound();
-                    break;
-                }
-            }
-        }
-    }
+for (int i = 32; i <= 348; i++) {
+// Mojang mappings natively accept the Window object directly!
+if (com.mojang.blaze3d.platform.InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), i)) {
+if (i == GLFW.GLFW_KEY_ESCAPE || i == GLFW.GLFW_KEY_BACKSPACE || i == GLFW.GLFW_KEY_DELETE) {
+module.setKeyBind(-1);
+} else {
+module.setKeyBind(i);
+}
+listening = false;
+Clickgui.playSound();
+break;
+}
+}
+}
 }
 
 @Override
