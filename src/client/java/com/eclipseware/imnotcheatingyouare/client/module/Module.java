@@ -39,7 +39,8 @@ toggle(); // Default behavior is to toggle. Macros can override this!
 }
 
 public void tickKeybind() {
-if (keyBind == -1 || mc.getWindow() == null) return;
+// If mc.screen is not null, the user is in chat, a menu, or an inventory. Don't trigger keybinds!
+if (keyBind == -1 || mc.getWindow() == null || mc.screen != null) return;
 
 // Mojang mappings natively accept the Window object directly!
 boolean isDown = com.mojang.blaze3d.platform.InputConstants.isKeyDown(mc.getWindow(), keyBind);

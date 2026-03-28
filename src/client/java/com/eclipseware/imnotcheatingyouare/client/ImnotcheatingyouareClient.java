@@ -54,6 +54,13 @@ Module lungeAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.
     moduleManager.modules.add(breachSwap);
     moduleManager.modules.add(lungeAssist);
 
+    Module pearlCatch = new com.eclipseware.imnotcheatingyouare.client.module.impl.PearlCatch();
+moduleManager.modules.add(pearlCatch);
+settingsManager.rSetting(new Setting("Delay (Ticks)", pearlCatch, 4.0, 0.0, 20.0, true));
+
+    Module configurator = new com.eclipseware.imnotcheatingyouare.client.module.impl.Configurator();
+    moduleManager.modules.add(configurator);
+
         // --- REGISTER SETTINGS ---
         java.util.ArrayList<String> fbModes = new java.util.ArrayList<>();
         fbModes.add("Night Vision");
@@ -121,8 +128,10 @@ settingsManager.rSetting(new Setting("Name", nameProtect, "Marlowww", npNames));
     bsModes.add("Swap");
     bsModes.add("Silent");
     settingsManager.rSetting(new Setting("Mode", breachSwap, "Swap", bsModes));
-    settingsManager.rSetting(new Setting("Swap Back", breachSwap, true));
-    settingsManager.rSetting(new Setting("Swap Back Delay (ms)", breachSwap, 100.0, 0.0, 1000.0, true));
+settingsManager.rSetting(new Setting("Swap Back", breachSwap, true));
+settingsManager.rSetting(new Setting("Swap Back Delay (ms)", breachSwap, 100.0, 0.0, 1000.0, true));
+
+    settingsManager.rSetting(new Setting("Delay (Ticks)", pearlCatch, 4.0, 0.0, 20.0, true));
 
     // 2. Register Category
         net.minecraft.client.KeyMapping.Category guiCategory = net.minecraft.client.KeyMapping.Category.register(
@@ -157,5 +166,35 @@ m.onTick();
 }
 }
 });
+
+    // 4. Load Configuration (Must happen AFTER modules/settings are fully registered)
+com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager.load();
+
+    // 5. Save config if the user closes the game unexpectedly
+    Runtime.getRuntime().addShutdownHook(new Thread(com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager::save));
+
+    // 6. Register Real Client Commands (Includes Tab Auto-Complete!)
+net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+dispatcher.register(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("config")
+.then(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("gui")
+.executes(context -> {
+// Safely schedule the screen opening on the main client thread
+net.minecraft.client.Minecraft.getInstance().execute(() ->
+net.minecraft.client.Minecraft.getInstance().setScreen(new com.eclipseware.imnotcheatingyouare.client.clickgui.ConfigGui())
+);
+return 1;
+})
+)
+.then(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("export")
+.executes(context -> {
+String exp = com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager.exportSpecific(moduleManager.modules);
+net.minecraft.client.Minecraft.getInstance().keyboardHandler.setClipboard(exp);
+context.getSource().sendFeedback(net.minecraft.network.chat.Component.literal("§d[EclipseWare] §7Config exported to clipboard!"));
+return 1;
+})
+)
+);
+});
 }
+
 }
