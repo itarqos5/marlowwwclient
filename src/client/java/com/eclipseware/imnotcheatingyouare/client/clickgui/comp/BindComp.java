@@ -2,57 +2,46 @@ package com.eclipseware.imnotcheatingyouare.client.clickgui.comp;
 
 import com.eclipseware.imnotcheatingyouare.client.clickgui.Clickgui;
 import com.eclipseware.imnotcheatingyouare.client.module.Module;
-import net.minecraft.client.Minecraft;
+import com.eclipseware.imnotcheatingyouare.client.utils.FontUtils;
 import net.minecraft.client.gui.GuiGraphics;
-import org.lwjgl.glfw.GLFW;
-
 import java.awt.Color;
 
 public class BindComp extends Comp {
-    public boolean listening = false;
+    private boolean isBinding;
 
     public BindComp(double x, double y, Clickgui parent, Module module) {
         this.x = x; this.y = y; this.parent = parent; this.module = module;
     }
 
     @Override
-public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-guiGraphics.fill((int)(parent.posX + x), (int)(parent.posY + y), (int)(parent.posX + x + 100), (int)(parent.posY + y + 14), new Color(30, 30, 30).getRGB());
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        String bindName = module.getKeyBind() == -1 ? "None" : org.lwjgl.glfw.GLFW.glfwGetKeyName(module.getKeyBind(), org.lwjgl.glfw.GLFW.glfwGetKeyScancode(module.getKeyBind()));
+        if (bindName == null) bindName = "Unknown";
+        bindName = bindName.toUpperCase();
 
-    if (listening) {
-        guiGraphics.fill((int)(parent.posX + x), (int)(parent.posY + y), (int)(parent.posX + x + 100), (int)(parent.posY + y + 14), new Color(230, 10, 230, 50).getRGB());
+        FontUtils.drawString(guiGraphics, isBinding ? "Listening..." : "Keybind: ", (int)(parent.posX + x), (int)(parent.posY + y), new Color(200, 200, 200).getRGB(), false);
+        if (!isBinding) {
+            FontUtils.drawString(guiGraphics, bindName, (int)(parent.posX + x) + FontUtils.width("Keybind: "), (int)(parent.posY + y), new Color(155, 60, 255).getRGB(), false);
+        }
     }
 
-    String keyName = module.getKeyBind() == -1 ? "NONE" : GLFW.glfwGetKeyName(module.getKeyBind(), GLFW.glfwGetKeyScancode(module.getKeyBind()));
-    if (keyName == null) keyName = String.valueOf(module.getKeyBind());
-    if (module.getKeyBind() == GLFW.GLFW_KEY_RIGHT_SHIFT) keyName = "RSHIFT";
-    
-    String text = listening ? "Listening..." : "Bind: " + keyName.toUpperCase();
-    guiGraphics.drawString(Minecraft.getInstance().font, text, (int)(parent.posX + x + 50) - (Minecraft.getInstance().font.width(text) / 2), (int)(parent.posY + y + 3), listening ? new Color(230, 10, 230).getRGB() : new Color(200, 200, 200).getRGB(), false);
+    @Override
+    public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (isInside(mouseX, mouseY, parent.posX + x, parent.posY + y, parent.posX + x + 100, parent.posY + y + 10) && mouseButton == 0) {
+            isBinding = !isBinding;
+            Clickgui.playSound();
+        }
+    }
 
-    if (listening) {
-for (int i = 32; i <= 348; i++) {
-// Mojang mappings natively accept the Window object directly!
-if (com.mojang.blaze3d.platform.InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), i)) {
-if (i == GLFW.GLFW_KEY_ESCAPE || i == GLFW.GLFW_KEY_BACKSPACE || i == GLFW.GLFW_KEY_DELETE) {
-module.setKeyBind(-1);
-} else {
-module.setKeyBind(i);
-}
-listening = false;
-Clickgui.playSound();
-break;
-}
-}
-}
-}
-
-@Override
-public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
-if (isInside(mouseX, mouseY, parent.posX + x, parent.posY + y, parent.posX + x + 100, parent.posY + y + 14) && mouseButton == 0) {
-listening = !listening;
-Clickgui.playSound();
-}
-}
-
+    // This handles mapping the actual key presses
+    public void keyPressed(int key, int scanCode, int modifiers) {
+        if (isBinding) {
+            if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE || key == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE || key == org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE) {
+                module.setKeyBind(-1);
+            } else {
+                module.setKeyBind(key);
+            }
+            isBinding = false;
+        }
+    }
 }

@@ -166,12 +166,12 @@ public class Clickgui extends Screen {
                 int textColor = interpolateColor(new Color(140, 140, 140), new Color(255, 255, 255), currentModAnim).getRGB();
 
                 guiGraphics.fill((int)posX + 140, modY, (int)(posX + windowWidth - 20), modY + 30, cardColor);
-                guiGraphics.fill((int)posX + 140, modY, (int)posX + 140 + (int)(3 * currentModAnim), modY + 30, accent);
-                
-                FontUtils.drawString(guiGraphics, m.getName(), (int)posX + 155, modY + 11, textColor, false);
-                FontUtils.drawString(guiGraphics, "⚙ Right-Click", (int)(posX + windowWidth - 90), modY + 11, new Color(100, 100, 100).getRGB(), false);
+guiGraphics.fill((int)posX + 140, modY, (int)posX + 140 + (int)(3 * currentModAnim), modY + 30, accent);
 
-                modY += 36;
+            FontUtils.drawString(guiGraphics, m.getName(), (int)posX + 155, modY + 11, textColor, false);
+            FontUtils.drawString(guiGraphics, "Right-Click", (int)(posX + windowWidth - 80), modY + 11, new Color(100, 100, 100).getRGB(), false);
+
+            modY += 36;
             }
             guiGraphics.pose().popMatrix();
             guiGraphics.pose().popMatrix();
@@ -182,9 +182,9 @@ public class Clickgui extends Screen {
             guiGraphics.pose().translate((1f - settingsSlideAnim) * 400, 0f);
 
             boolean backHover = isInside(mouseX, mouseY, posX + 140, posY + 15, posX + 190, posY + 25);
-            FontUtils.drawString(guiGraphics, "← Back", (int)posX + 140, (int)posY + 15, backHover ? -1 : new Color(140, 140, 140).getRGB(), false);
-            
-            if (selectedModule != null) {
+FontUtils.drawString(guiGraphics, "< Back", (int)posX + 140, (int)posY + 15, backHover ? -1 : new Color(140, 140, 140).getRGB(), false);
+
+        if (selectedModule != null) {
                 FontUtils.drawString(guiGraphics, selectedModule.getName() + " Settings", (int)posX + 140, (int)posY + 32, accent, false);
             }
             
@@ -202,10 +202,32 @@ public class Clickgui extends Screen {
         }
 
         guiGraphics.disableScissor();
-        guiGraphics.pose().popMatrix(); 
+
+    // --- DRAW HOVER DESCRIPTIONS ---
+    if (selectedModule == null) {
+        int modY = (int)posY + 55 + (int)moduleScrollOffset;
+        for (Module m : ImnotcheatingyouareClient.INSTANCE.moduleManager.getModules(selectedCategory)) {
+            if (isInside(mouseX, mouseY, posX + 140, modY, posX + windowWidth - 20, modY + 30)) {
+                String desc = m.getDescription();
+                if (desc != null && !desc.isEmpty()) {
+int tw = FontUtils.width(desc);
+guiGraphics.pose().pushMatrix();
+// Removed the Z-translation! It renders last naturally, so it will always be on top.
+guiGraphics.fill(mouseX + 10, mouseY, mouseX + 14 + tw, mouseY + 14, new Color(15, 15, 15, 240).getRGB());
+guiGraphics.fill(mouseX + 10, mouseY, mouseX + 11, mouseY + 14, accent); // Accent line
+                    FontUtils.drawString(guiGraphics, desc, mouseX + 14, mouseY + 3, -1, false);
+                    guiGraphics.pose().popMatrix();
+                }
+                break;
+            }
+            modY += 36;
+        }
     }
 
-    private Color interpolateColor(Color color1, Color color2, float fraction) {
+    guiGraphics.pose().popMatrix(); 
+}
+
+private Color interpolateColor(Color color1, Color color2, float fraction) {
         int red = (int) (color1.getRed() + (color2.getRed() - color1.getRed()) * fraction);
         int green = (int) (color1.getGreen() + (color2.getGreen() - color1.getGreen()) * fraction);
         int blue = (int) (color1.getBlue() + (color2.getBlue() - color1.getBlue()) * fraction);

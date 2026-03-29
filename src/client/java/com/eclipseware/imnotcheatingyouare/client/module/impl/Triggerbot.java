@@ -43,78 +43,76 @@ public Triggerbot() {
     }
 
     private void runLegit() {
-// 1️⃣  Do not attack while a container GUI is open
-if (mc.screen instanceof AbstractContainerScreen<?>) {
-tickCounter = 0;
-return;
-}
+        if (mc.screen instanceof AbstractContainerScreen<?>) {
+            tickCounter = 0;
+            return;
+        }
 
-    // 2️⃣  Must have a valid entity under the cross‑hair
-    if (mc.hitResult == null || mc.hitResult.getType() != HitResult.Type.ENTITY) {
-        tickCounter = 0;
-        return;
-    }
-    Entity target = ((EntityHitResult) mc.hitResult).getEntity();
-    if (!isValidTarget(target)) {
-        tickCounter = 0;
-        return;
-    }
+        if (mc.hitResult == null || mc.hitResult.getType() != HitResult.Type.ENTITY) {
+            tickCounter = 0;
+            return;
+        }
+        Entity target = ((EntityHitResult) mc.hitResult).getEntity();
+        if (!isValidTarget(target)) {
+            tickCounter = 0;
+            return;
+        }
 
-    // 3️⃣  Range check (default 4.25 blocks)
-    Setting rangeSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager
-            .getSettingByName(this, "Range");
-    double range = rangeSetting != null ? rangeSetting.getValDouble() : 4.25;
-    if (mc.player.distanceToSqr(target) > (range * range)) {
-        tickCounter = 0;
-        return;
-    }
+        Setting rangeSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Range");
+        double range = rangeSetting != null ? rangeSetting.getValDouble() : 4.25;
+        if (mc.player.distanceToSqr(target) > (range * range)) {
+            tickCounter = 0;
+            return;
+        }
 
-    // 4️⃣  Attack Bar (Cooldown) check
-    if (mc.player.getAttackStrengthScale(0.5f) < 1.0f) {
-        tickCounter = 0; // Wait for the attack bar to be fully charged
-        return;
-    }
+        if (mc.player.getAttackStrengthScale(0.5f) < 1.0f) {
+            tickCounter = 0;
+            return;
+        }
 
-    // 5️⃣  Tick Delay Logic
-tickCounter++;
-if (tickCounter >= currentTargetDelay) {
-
-        // --> HitSelect Interception for Legit Triggerbot <--
-        Module hitSelectMod = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("HitSelect");
-        if (hitSelectMod != null && hitSelectMod.isToggled() && hitSelectMod instanceof com.eclipseware.imnotcheatingyouare.client.module.impl.HitSelect hs) {
-            if (!hs.canAttack(target)) {
-                return; // Hold the attack perfectly until HitSelect conditions are met!
+        tickCounter++;
+        if (tickCounter >= currentTargetDelay) {
+            Module hitSelectMod = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("HitSelect");
+            if (hitSelectMod != null && hitSelectMod.isToggled() && hitSelectMod instanceof com.eclipseware.imnotcheatingyouare.client.module.impl.HitSelect hs) {
+                if (!hs.canAttack(target)) {
+                    return;
+                }
             }
+
+            boolean autoPunishActive = hitSelectMod != null && hitSelectMod.isToggled();
+
+            if (autoPunishActive) {
+                if (hitSelectMod instanceof com.eclipseware.imnotcheatingyouare.client.module.impl.HitSelect hs) {
+                    hs.performPunishAttack();
+                } else {
+                    pressAttackKey();
+                }
+            } else {
+                Setting simulateClick = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Simulate Mouse Click");
+                if (simulateClick != null && simulateClick.getValBoolean()) {
+                    pressAttackKey();
+                } else {
+                    mc.gameMode.attack(mc.player, target);
+                    mc.player.swing(InteractionHand.MAIN_HAND);
+                }
+            }
+
+            Setting minSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Min Delay (Ticks)");
+            Setting maxSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Max Delay (Ticks)");
+            
+            int min = minSetting != null ? (int) minSetting.getValDouble() : 1;
+            int max = maxSetting != null ? (int) maxSetting.getValDouble() : 4;
+            
+            if (min > max) {
+                int temp = min;
+                min = max;
+                max = temp;
+            }
+
+            currentTargetDelay = min + (int) (Math.random() * ((max - min) + 1));
+            tickCounter = 0;
         }
-
-        // 6️⃣  Execute the attack
-        Setting simulateClick = ImnotcheatingyouareClient.INSTANCE.settingsManager
-                .getSettingByName(this, "Simulate Mouse Click");
-
-        if (simulateClick != null && simulateClick.getValBoolean()) {
-            pressAttackKey();
-        } else {
-            mc.gameMode.attack(mc.player, target);
-            mc.player.swing(InteractionHand.MAIN_HAND);
-        }
-
-        // Generate new random delay for the next strike
-        Setting minSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Min Delay (Ticks)");
-        Setting maxSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Max Delay (Ticks)");
-        
-        int min = minSetting != null ? (int) minSetting.getValDouble() : 1;
-        int max = maxSetting != null ? (int) maxSetting.getValDouble() : 4;
-        
-        if (min > max) {
-            int temp = min;
-            min = max;
-            max = temp;
-        }
-
-        currentTargetDelay = min + (int) (Math.random() * ((max - min) + 1));
-        tickCounter = 0;
     }
-}
 
     private void runBlatant() {
         if (mc.screen != null) return;
@@ -124,22 +122,19 @@ if (tickCounter >= currentTargetDelay) {
         if (!isValidTarget(target)) return;
 
         if (mc.player.getAttackStrengthScale(0.0f) < 1.0f) return;
-
-    // --> HitSelect Interception for Blatant Triggerbot <--
-    Module hitSelectMod = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("HitSelect");
-    if (hitSelectMod != null && hitSelectMod.isToggled() && hitSelectMod instanceof com.eclipseware.imnotcheatingyouare.client.module.impl.HitSelect hs) {
-        if (!hs.canAttack(target)) {
-            return; // Hold the attack!
-        }
-    }
-
-    Setting bypassSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Packet Bypass");
-        if (bypassSetting != null && bypassSetting.getValBoolean()) {
-            runPacketBypass();
-        }
-
-        mc.gameMode.attack(mc.player, target);
-        mc.player.swing(InteractionHand.MAIN_HAND);
+// --> HitSelect Interception for Blatant Triggerbot <--
+Module hitSelectMod = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("HitSelect");
+if (hitSelectMod != null && hitSelectMod.isToggled() && hitSelectMod instanceof com.eclipseware.imnotcheatingyouare.client.module.impl.HitSelect hs) {
+if (!hs.canAttack(target)) {
+return; // Hold the attack!
+}
+}
+Setting bypassSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Packet Bypass");
+if (bypassSetting != null && bypassSetting.getValBoolean()) {
+runPacketBypass();
+}
+mc.gameMode.attack(mc.player, target);
+mc.player.swing(InteractionHand.MAIN_HAND);
     }
 
     private void runPacketBypass() {

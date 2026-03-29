@@ -3,7 +3,7 @@ package com.eclipseware.imnotcheatingyouare.client.clickgui.comp;
 import com.eclipseware.imnotcheatingyouare.client.clickgui.Clickgui;
 import com.eclipseware.imnotcheatingyouare.client.module.Module;
 import com.eclipseware.imnotcheatingyouare.client.setting.Setting;
-import net.minecraft.client.Minecraft;
+import com.eclipseware.imnotcheatingyouare.client.utils.FontUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import java.awt.Color;
 
@@ -14,27 +14,20 @@ public class Combo extends Comp {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.fill((int)(parent.posX + x), (int)(parent.posY + y), (int)(parent.posX + x + 80), (int)(parent.posY + y + 12), new Color(30, 30, 30).getRGB());
-        guiGraphics.drawString(Minecraft.getInstance().font, setting.getName() + ": " + setting.getValString(), (int)(parent.posX + x + 2), (int)(parent.posY + y + 2), new Color(200, 200, 200).getRGB(), false);
+        FontUtils.drawString(guiGraphics, setting.getName() + ": ", (int)(parent.posX + x), (int)(parent.posY + y), new Color(200, 200, 200).getRGB(), false);
+        FontUtils.drawString(guiGraphics, setting.getValString(), (int)(parent.posX + x) + FontUtils.width(setting.getName() + ": "), (int)(parent.posY + y), new Color(155, 60, 255).getRGB(), false);
     }
 
     @Override
-public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
-if (isInside(mouseX, mouseY, parent.posX + x, parent.posY + y, parent.posX + x + 80, parent.posY + y + 12) && mouseButton == 0) {
-int max = setting.getOptions().size();
-int currentIndex = setting.getOptions().indexOf(setting.getValString());
-
-    if (currentIndex + 1 >= max) {
-        setting.setValString(setting.getOptions().get(0));
-    } else {
-        setting.setValString(setting.getOptions().get(currentIndex + 1));
+    public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (isInside(mouseX, mouseY, parent.posX + x, parent.posY + y, parent.posX + x + FontUtils.width(setting.getName() + ": " + setting.getValString()), parent.posY + y + 10) && mouseButton == 0) {
+            int index = setting.getOptions().indexOf(setting.getValString());
+            if (index + 1 >= setting.getOptions().size()) {
+                setting.setValString(setting.getOptions().get(0));
+            } else {
+                setting.setValString(setting.getOptions().get(index + 1));
+            }
+            Clickgui.playSound();
+        }
     }
-    
-    Clickgui.playSound();
-
-    // Immediately refresh the GUI to update conditional settings!
-    parent.loadComponents(module);
-}
-
-}
 }

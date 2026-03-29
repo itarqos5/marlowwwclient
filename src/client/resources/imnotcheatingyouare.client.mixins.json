@@ -1,21 +1,23 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "com.eclipseware.imnotcheatingyouare.mixin.client",
-  "compatibilityLevel": "JAVA_21",
-  "client": [
+"required": true,
+"minVersion": "0.8",
+"package": "com.eclipseware.imnotcheatingyouare.mixin.client",
+"compatibilityLevel": "JAVA_21",
+"refmap": "imnotcheatingyouare-refmap.json",
+"client": [
 "NoJumpDelayMixin",
 "AutoSprintMixin",
 "LightTextureMixin",
 "MultiPlayerGameModeMixin",
 "ChatComponentMixin",
 "PlayerTabOverlayMixin",
-"MinecraftAccessor"
+"MinecraftAccessor",
+"JumpResetMixin"
 ],
-  "injectors": {
-    "defaultRequire": 1
-  },
-  "overwrites": {
-    "requireAnnotations": true
-  }
+"injectors": {
+"defaultRequire": 1
+},
+"overwrites": {
+"requireAnnotations": true
+}
 }

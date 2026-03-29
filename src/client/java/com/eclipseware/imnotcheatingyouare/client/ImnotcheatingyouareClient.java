@@ -30,47 +30,49 @@ public class ImnotcheatingyouareClient implements ClientModInitializer {
         clickGui = new Clickgui();
 
         // 1. Register Modules
-        Module fullbright = new com.eclipseware.imnotcheatingyouare.client.module.impl.Fullbright();
         Module autoSprint = new Module("AutoSprint", Category.Movement);
         Module noJumpDelay = new Module("NoJumpDelay", Category.Movement);
         Module aimAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.AimAssist();
         Module triggerbot = new com.eclipseware.imnotcheatingyouare.client.module.impl.Triggerbot();
         Module hitSelect = new com.eclipseware.imnotcheatingyouare.client.module.impl.HitSelect();
         Module autoShieldBreaker = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoShieldBreaker();
-Module arrayListMod = new com.eclipseware.imnotcheatingyouare.client.module.impl.ArrayListMod();
-Module nameProtect = new com.eclipseware.imnotcheatingyouare.client.module.impl.NameProtect();
-Module breachSwap = new com.eclipseware.imnotcheatingyouare.client.module.impl.BreachSwap();
+        Module arrayListMod = new com.eclipseware.imnotcheatingyouare.client.module.impl.ArrayListMod();
+        Module nameProtect = new com.eclipseware.imnotcheatingyouare.client.module.impl.NameProtect();
+        Module breachSwap = new com.eclipseware.imnotcheatingyouare.client.module.impl.BreachSwap();
 Module lungeAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.LungeAssist();
+Module pearlCatch = new com.eclipseware.imnotcheatingyouare.client.module.impl.PearlCatch();
+Module jumpReset = new com.eclipseware.imnotcheatingyouare.client.module.impl.JumpReset();
+        Module configurator = new com.eclipseware.imnotcheatingyouare.client.module.impl.Configurator();
+        Module fullbright = new com.eclipseware.imnotcheatingyouare.client.module.impl.Fullbright();
+        Module reach = new com.eclipseware.imnotcheatingyouare.client.module.impl.Reach();
+        Module handView = new com.eclipseware.imnotcheatingyouare.client.module.impl.HandView();
+        Module esp = new com.eclipseware.imnotcheatingyouare.client.module.impl.ESP();
+        Module tracers = new com.eclipseware.imnotcheatingyouare.client.module.impl.Tracers();
+        Module nametags = new com.eclipseware.imnotcheatingyouare.client.module.impl.Nametags();
 
-    moduleManager.modules.add(fullbright);
-    moduleManager.modules.add(autoSprint);
-    moduleManager.modules.add(noJumpDelay);
-    moduleManager.modules.add(aimAssist);
-    moduleManager.modules.add(triggerbot);
-    moduleManager.modules.add(hitSelect);
-    moduleManager.modules.add(autoShieldBreaker);
-    moduleManager.modules.add(arrayListMod);
-    moduleManager.modules.add(nameProtect);
-    moduleManager.modules.add(breachSwap);
-    moduleManager.modules.add(lungeAssist);
-
-    Module pearlCatch = new com.eclipseware.imnotcheatingyouare.client.module.impl.PearlCatch();
+        moduleManager.modules.add(autoSprint);
+        moduleManager.modules.add(noJumpDelay);
+        moduleManager.modules.add(aimAssist);
+        moduleManager.modules.add(triggerbot);
+        moduleManager.modules.add(hitSelect);
+        moduleManager.modules.add(autoShieldBreaker);
+        moduleManager.modules.add(arrayListMod);
+        moduleManager.modules.add(nameProtect);
+        moduleManager.modules.add(breachSwap);
+moduleManager.modules.add(lungeAssist);
 moduleManager.modules.add(pearlCatch);
-settingsManager.rSetting(new Setting("Delay (Ticks)", pearlCatch, 4.0, 0.0, 20.0, true));
-
-    Module configurator = new com.eclipseware.imnotcheatingyouare.client.module.impl.Configurator();
-    moduleManager.modules.add(configurator);
+moduleManager.modules.add(jumpReset);
+moduleManager.modules.add(configurator);
+        moduleManager.modules.add(fullbright);
+        moduleManager.modules.add(reach);
+        moduleManager.modules.add(handView);
+        moduleManager.modules.add(esp);
+        moduleManager.modules.add(tracers);
+        moduleManager.modules.add(nametags);
 
         // --- REGISTER SETTINGS ---
-        java.util.ArrayList<String> fbModes = new java.util.ArrayList<>();
-        fbModes.add("Night Vision");
-        fbModes.add("Gamma");
-        settingsManager.rSetting(new Setting("Mode", fullbright, "Night Vision", fbModes));
-
         java.util.ArrayList<String> aimModes = new java.util.ArrayList<>();
-        aimModes.add("Wind");
-        aimModes.add("Smooth");
-        aimModes.add("Snap");
+        aimModes.add("Wind"); aimModes.add("Smooth"); aimModes.add("Snap");
         settingsManager.rSetting(new Setting("Mode", aimAssist, "Wind", aimModes));
         settingsManager.rSetting(new Setting("Smoothness", aimAssist, 5.0, 1.0, 10.0, false));
         settingsManager.rSetting(new Setting("Speed", aimAssist, 5.0, 1.0, 10.0, false));
@@ -83,11 +85,10 @@ settingsManager.rSetting(new Setting("Delay (Ticks)", pearlCatch, 4.0, 0.0, 20.0
         settingsManager.rSetting(new Setting("Passive Mobs", aimAssist, false));
 
         java.util.ArrayList<String> tbModes = new java.util.ArrayList<>();
-tbModes.add("Legit");
-tbModes.add("Blatant");
-settingsManager.rSetting(new Setting("Mode", triggerbot, "Legit", tbModes));
-settingsManager.rSetting(new Setting("Range", triggerbot, 4.25, 1.0, 6.0, false));
-settingsManager.rSetting(new Setting("Min Delay (Ticks)", triggerbot, 1.0, 0.0, 20.0, true));
+        tbModes.add("Legit"); tbModes.add("Blatant");
+        settingsManager.rSetting(new Setting("Mode", triggerbot, "Legit", tbModes));
+        settingsManager.rSetting(new Setting("Range", triggerbot, 4.25, 1.0, 6.0, false));
+        settingsManager.rSetting(new Setting("Min Delay (Ticks)", triggerbot, 1.0, 0.0, 20.0, true));
         settingsManager.rSetting(new Setting("Max Delay (Ticks)", triggerbot, 4.0, 0.0, 20.0, true));
         settingsManager.rSetting(new Setting("Inventory Fix", triggerbot, true));
         settingsManager.rSetting(new Setting("Simulate Mouse Click", triggerbot, true)); 
@@ -97,41 +98,68 @@ settingsManager.rSetting(new Setting("Min Delay (Ticks)", triggerbot, 1.0, 0.0, 
         settingsManager.rSetting(new Setting("Passive Mobs", triggerbot, false));
 
         java.util.ArrayList<String> hsModes = new java.util.ArrayList<>();
-        hsModes.add("HurtTime");
-        hsModes.add("Criticals");
+        hsModes.add("HurtTime"); hsModes.add("Criticals");
         settingsManager.rSetting(new Setting("Mode", hitSelect, "HurtTime", hsModes));
         settingsManager.rSetting(new Setting("Max HurtTime", hitSelect, 5.0, 0.0, 10.0, true));
+        settingsManager.rSetting(new Setting("Auto Punish", hitSelect, false));
+        settingsManager.rSetting(new Setting("Punish Delay (Ticks)", hitSelect, 3.0, 0.0, 10.0, true));
 
         java.util.ArrayList<String> asbModes = new java.util.ArrayList<>();
-        asbModes.add("Swap");
-        asbModes.add("Silent");
+        asbModes.add("Swap"); asbModes.add("Silent");
         settingsManager.rSetting(new Setting("Mode", autoShieldBreaker, "Swap", asbModes));
         settingsManager.rSetting(new Setting("Delay (ms)", autoShieldBreaker, 50.0, 0.0, 1000.0, true));
         settingsManager.rSetting(new Setting("Swap Back", autoShieldBreaker, true));
         settingsManager.rSetting(new Setting("Swap Back Delay (ms)", autoShieldBreaker, 100.0, 0.0, 1000.0, true));
 
         java.util.ArrayList<String> alAlignments = new java.util.ArrayList<>();
-        alAlignments.add("Left");
-        alAlignments.add("Right");
+        alAlignments.add("Left"); alAlignments.add("Right");
         settingsManager.rSetting(new Setting("Alignment", arrayListMod, "Left", alAlignments));
         settingsManager.rSetting(new Setting("Red", arrayListMod, 230.0, 0.0, 255.0, true));
-settingsManager.rSetting(new Setting("Green", arrayListMod, 10.0, 0.0, 255.0, true));
-settingsManager.rSetting(new Setting("Blue", arrayListMod, 230.0, 0.0, 255.0, true));
+        settingsManager.rSetting(new Setting("Green", arrayListMod, 10.0, 0.0, 255.0, true));
+        settingsManager.rSetting(new Setting("Blue", arrayListMod, 230.0, 0.0, 255.0, true));
 
-    java.util.ArrayList<String> npNames = new java.util.ArrayList<>();
-npNames.add("Marlowww");
-npNames.add("Hidden");
-npNames.add("You");
-settingsManager.rSetting(new Setting("Name", nameProtect, "Marlowww", npNames));
+        java.util.ArrayList<String> npNames = new java.util.ArrayList<>();
+        npNames.add("Marlowww"); npNames.add("Hidden"); npNames.add("You");
+        settingsManager.rSetting(new Setting("Name", nameProtect, "Marlowww", npNames));
+        settingsManager.rSetting(new Setting("TIP: Hide chat in Accessibility Settings", nameProtect, false));
 
-    java.util.ArrayList<String> bsModes = new java.util.ArrayList<>();
-    bsModes.add("Swap");
-    bsModes.add("Silent");
-    settingsManager.rSetting(new Setting("Mode", breachSwap, "Swap", bsModes));
+        java.util.ArrayList<String> bsModes = new java.util.ArrayList<>();
+bsModes.add("Swap"); bsModes.add("Silent");
+settingsManager.rSetting(new Setting("Mode", breachSwap, "Swap", bsModes));
 settingsManager.rSetting(new Setting("Swap Back", breachSwap, true));
 settingsManager.rSetting(new Setting("Swap Back Delay (ms)", breachSwap, 100.0, 0.0, 1000.0, true));
+java.util.ArrayList<String> jrModes = new java.util.ArrayList<>();
+jrModes.add("Legit"); jrModes.add("Blatant");
+settingsManager.rSetting(new Setting("Mode", jumpReset, "Legit", jrModes));
+settingsManager.rSetting(new Setting("Delay (Ticks)", jumpReset, 0.0, 0.0, 5.0, true));
+settingsManager.rSetting(new Setting("Velocity Threshold", jumpReset, 0.1, 0.0, 1.0, false));
+settingsManager.rSetting(new Setting("Delay (Ticks)", pearlCatch, 4.0, 0.0, 20.0, true));
 
-    settingsManager.rSetting(new Setting("Delay (Ticks)", pearlCatch, 4.0, 0.0, 20.0, true));
+        settingsManager.rSetting(new Setting("Distance", reach, 0.5, 0.0, 1.0, false));
+
+        settingsManager.rSetting(new Setting("Main Scale X", handView, 1.0, 0.1, 3.0, false));
+        settingsManager.rSetting(new Setting("Main Scale Y", handView, 1.0, 0.1, 3.0, false));
+        settingsManager.rSetting(new Setting("Main Scale Z", handView, 1.0, 0.1, 3.0, false));
+        settingsManager.rSetting(new Setting("Main Pos X", handView, 0.0, -2.0, 2.0, false));
+        settingsManager.rSetting(new Setting("Main Pos Y", handView, 0.0, -2.0, 2.0, false));
+        settingsManager.rSetting(new Setting("Main Pos Z", handView, 0.0, -2.0, 2.0, false));
+        settingsManager.rSetting(new Setting("Off Scale X", handView, 1.0, 0.1, 3.0, false));
+        settingsManager.rSetting(new Setting("Off Scale Y", handView, 1.0, 0.1, 3.0, false));
+        settingsManager.rSetting(new Setting("Off Scale Z", handView, 1.0, 0.1, 3.0, false));
+        settingsManager.rSetting(new Setting("Off Pos X", handView, 0.0, -2.0, 2.0, false));
+        settingsManager.rSetting(new Setting("Off Pos Y", handView, 0.0, -2.0, 2.0, false));
+        settingsManager.rSetting(new Setting("Off Pos Z", handView, 0.0, -2.0, 2.0, false));
+
+        java.util.ArrayList<String> espModes = new java.util.ArrayList<>();
+        espModes.add("Outline"); espModes.add("3D"); espModes.add("2D"); espModes.add("Hybrid");
+        settingsManager.rSetting(new Setting("Mode", esp, "Outline", espModes));
+        settingsManager.rSetting(new Setting("Show Mobs", esp, false));
+
+        settingsManager.rSetting(new Setting("Crosshair Attach", tracers, true));
+settingsManager.rSetting(new Setting("Show Mobs", tracers, false));
+
+    settingsManager.rSetting(new Setting("Players", nametags, true));
+    settingsManager.rSetting(new Setting("Show Mobs", nametags, false));
 
     // 2. Register Category
         net.minecraft.client.KeyMapping.Category guiCategory = net.minecraft.client.KeyMapping.Category.register(
@@ -160,41 +188,39 @@ settingsManager.rSetting(new Setting("Swap Back Delay (ms)", breachSwap, 100.0, 
             }
 
             for (Module m : moduleManager.modules) {
-m.tickKeybind(); // Listen for keys universally
-if (m.isToggled()) {
-m.onTick();
-}
-}
-});
+                m.tickKeybind(); // Listen for keys universally
+                if (m.isToggled()) {
+                    m.onTick();
+                }
+            }
+        });
 
-    // 4. Load Configuration (Must happen AFTER modules/settings are fully registered)
-com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager.load();
+        // 4. Load Configuration
+        com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager.load();
 
-    // 5. Save config if the user closes the game unexpectedly
-    Runtime.getRuntime().addShutdownHook(new Thread(com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager::save));
+        // 5. Save config if the user closes the game unexpectedly
+        Runtime.getRuntime().addShutdownHook(new Thread(com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager::save));
 
-    // 6. Register Real Client Commands (Includes Tab Auto-Complete!)
-net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-dispatcher.register(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("config")
-.then(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("gui")
-.executes(context -> {
-// Safely schedule the screen opening on the main client thread
-net.minecraft.client.Minecraft.getInstance().execute(() ->
-net.minecraft.client.Minecraft.getInstance().setScreen(new com.eclipseware.imnotcheatingyouare.client.clickgui.ConfigGui())
-);
-return 1;
-})
-)
-.then(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("export")
-.executes(context -> {
-String exp = com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager.exportSpecific(moduleManager.modules);
-net.minecraft.client.Minecraft.getInstance().keyboardHandler.setClipboard(exp);
-context.getSource().sendFeedback(net.minecraft.network.chat.Component.literal("§d[EclipseWare] §7Config exported to clipboard!"));
-return 1;
-})
-)
-);
-});
-}
-
+        // 6. Register Real Client Commands
+        net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+            dispatcher.register(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("config")
+                .then(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("gui")
+                    .executes(context -> {
+                        net.minecraft.client.Minecraft.getInstance().execute(() ->
+                            net.minecraft.client.Minecraft.getInstance().setScreen(new com.eclipseware.imnotcheatingyouare.client.clickgui.ConfigGui())
+                        );
+                        return 1;
+                    })
+                )
+                .then(net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal("export")
+                    .executes(context -> {
+                        String exp = com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager.exportSpecific(moduleManager.modules);
+                        net.minecraft.client.Minecraft.getInstance().keyboardHandler.setClipboard(exp);
+                        context.getSource().sendFeedback(net.minecraft.network.chat.Component.literal("§d[EclipseWare] §7Config exported to clipboard!"));
+                        return 1;
+                    })
+                )
+            );
+        });
+    }
 }
