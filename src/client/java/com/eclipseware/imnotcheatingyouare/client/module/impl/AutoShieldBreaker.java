@@ -46,6 +46,8 @@ if (mc.getConnection() != null) {
 mc.getConnection().send(new ServerboundSetCarriedItemPacket(axeSlot));
 mc.getConnection().send(ServerboundInteractPacket.createAttackPacket(target, player.isShiftKeyDown()));
 }
+// Hotbar desync fix
+player.getInventory().setSelectedSlot(axeSlot);
 player.swing(InteractionHand.MAIN_HAND);
 needsSwapBack = true;
 originalSlot = oldSlot;

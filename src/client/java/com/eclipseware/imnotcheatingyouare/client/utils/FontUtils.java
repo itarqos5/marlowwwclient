@@ -8,6 +8,7 @@ import net.minecraft.network.chat.FontDescription;
 import net.minecraft.resources.Identifier;
 
 public class FontUtils {
+    // Hooks directly into your high-res oversampled verdana.json provider
     public static final Identifier VERDANA = Identifier.parse("imnotcheatingyouare:verdana");
 
     public static Component get(String text) {
@@ -21,6 +22,11 @@ public class FontUtils {
 
     public static void drawCenteredString(GuiGraphics graphics, String text, int x, int y, int color) {
         graphics.drawCenteredString(Minecraft.getInstance().font, get(text), x, y, color);
+    }
+    
+    public static void drawRightAlignedString(GuiGraphics graphics, String text, int rightX, int y, int color) {
+        int width = width(text);
+        graphics.drawString(Minecraft.getInstance().font, get(text), rightX - width, y, color, false);
     }
 
     public static int width(String text) {

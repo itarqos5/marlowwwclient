@@ -1,4 +1,4 @@
-package com.eclipseware.imnotcheatingyouare.mixin;
+package com.eclipseware.imnotcheatingyouare.mixin.client;
 
 import com.eclipseware.imnotcheatingyouare.client.ImnotcheatingyouareClient;
 import com.eclipseware.imnotcheatingyouare.client.module.impl.HandView;
@@ -17,11 +17,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ItemInHandRenderer.class)
 public class HandViewMixin {
 
-@Inject(method = "renderArmWithItem", at = @At("HEAD"))
-private void onRenderArmWithItem(AbstractClientPlayer player, float partialTicks, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equipProgress, PoseStack poseStack, SubmitNodeCollector buffer, int combinedLight, CallbackInfo ci) {
+    @Inject(method = "renderArmWithItem", at = @At("HEAD"))
+    private void onRenderArmWithItem(AbstractClientPlayer player, float partialTicks, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equipProgress, PoseStack poseStack, SubmitNodeCollector buffer, int combinedLight, CallbackInfo ci) {
         if (HandView.INSTANCE != null && HandView.INSTANCE.isToggled()) {
             
-            // Get settings for the specific hand
             String handPrefix = (hand == InteractionHand.MAIN_HAND) ? "Main " : "Off ";
             
             Setting scaleX = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(HandView.INSTANCE, handPrefix + "Scale X");
@@ -32,13 +31,11 @@ private void onRenderArmWithItem(AbstractClientPlayer player, float partialTicks
             Setting posY = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(HandView.INSTANCE, handPrefix + "Pos Y");
             Setting posZ = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(HandView.INSTANCE, handPrefix + "Pos Z");
 
-            // Apply Scales
             float sX = scaleX != null ? (float) scaleX.getValDouble() : 1.0f;
             float sY = scaleY != null ? (float) scaleY.getValDouble() : 1.0f;
             float sZ = scaleZ != null ? (float) scaleZ.getValDouble() : 1.0f;
             poseStack.scale(sX, sY, sZ);
 
-            // Apply Translations
             float pX = posX != null ? (float) posX.getValDouble() : 0.0f;
             float pY = posY != null ? (float) posY.getValDouble() : 0.0f;
             float pZ = posZ != null ? (float) posZ.getValDouble() : 0.0f;

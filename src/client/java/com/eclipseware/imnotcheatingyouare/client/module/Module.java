@@ -50,30 +50,36 @@ public class Module {
     }
 
     public void tickKeybind() {
-if (this.keyBind == -1 || mc.getWindow() == null) return;
+        if (this.keyBind == -1 || mc.getWindow() == null) return;
 
-    long windowHandle = 0;
-    try {
-        // 100% Pure Reflection! Hides the memory extraction from the compiler entirely 
-        // so it never throws a "cannot find symbol" error again.
-        for (java.lang.reflect.Field f : mc.getWindow().getClass().getDeclaredFields()) {
-            if (f.getType() == long.class) {
-                f.setAccessible(true);
-                windowHandle = f.getLong(mc.getWindow());
-                break;
-            }
+        // Don't toggle modules while any screen is open (chat, inventory, GUIs).
+        // Reset latching so releasing the key inside a screen doesn't cause
+        // an instant toggle the moment the screen closes.
+        if (mc.screen != null) {
+            wasKeyPressed = false;
+            return;
         }
-    } catch (Exception e) {}
 
-    if (windowHandle == 0) return;
+        long windowHandle = 0;
+        try {
+            for (java.lang.reflect.Field f : mc.getWindow().getClass().getDeclaredFields()) {
+                if (f.getType() == long.class) {
+                    f.setAccessible(true);
+                    windowHandle = f.getLong(mc.getWindow());
+                    break;
+                }
+            }
+        } catch (Exception e) {}
 
-    boolean isPressed = org.lwjgl.glfw.GLFW.glfwGetKey(windowHandle, this.keyBind) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
-    
-    if (isPressed && !wasKeyPressed) {
-        onKeybind();
+        if (windowHandle == 0) return;
+
+        boolean isPressed = org.lwjgl.glfw.GLFW.glfwGetKey(windowHandle, this.keyBind) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
+
+        if (isPressed && !wasKeyPressed) {
+            onKeybind();
+        }
+        wasKeyPressed = isPressed;
     }
-    wasKeyPressed = isPressed;
-}
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

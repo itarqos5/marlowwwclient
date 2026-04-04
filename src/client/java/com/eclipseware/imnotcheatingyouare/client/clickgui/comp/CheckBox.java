@@ -3,6 +3,8 @@ package com.eclipseware.imnotcheatingyouare.client.clickgui.comp;
 import com.eclipseware.imnotcheatingyouare.client.clickgui.Clickgui;
 import com.eclipseware.imnotcheatingyouare.client.module.Module;
 import com.eclipseware.imnotcheatingyouare.client.setting.Setting;
+import com.eclipseware.imnotcheatingyouare.client.ImnotcheatingyouareClient;
+import com.eclipseware.imnotcheatingyouare.client.utils.AnimationUtil;
 import com.eclipseware.imnotcheatingyouare.client.utils.FontUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import java.awt.Color;
@@ -20,20 +22,34 @@ public class CheckBox extends Comp {
         float target = setting.getValBoolean() ? 1f : 0f;
         slideAnim += (target - slideAnim) * 0.2f;
 
-        int bgOff = new Color(40, 40, 45).getRGB();
-        int bgOn = new Color(155, 60, 255).getRGB(); 
+        Module theme = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("Theme");
+        int r = 155, g = 60, b = 255;
+        if (theme != null) {
+            r = (int) ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(theme, "Accent R").getValDouble();
+            g = (int) ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(theme, "Accent G").getValDouble();
+            b = (int) ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(theme, "Accent B").getValDouble();
+        }
+
+        int bgOff = new Color(45, 45, 50).getRGB();
+        int bgOn = new Color(r, g, b).getRGB(); 
         int currentBg = interpolateColor(new Color(bgOff), new Color(bgOn), slideAnim).getRGB();
 
-        guiGraphics.fill((int)(parent.posX + x), (int)(parent.posY + y), (int)(parent.posX + x + 24), (int)(parent.posY + y + 12), currentBg);
-        int knobX = (int)(parent.posX + x + 2 + (slideAnim * 12));
-        guiGraphics.fill(knobX, (int)(parent.posY + y + 2), knobX + 8, (int)(parent.posY + y + 10), -1);
+        boolean hovered = isInside(mouseX, mouseY, parent.posX + x, parent.posY + y, parent.posX + x + 35 + FontUtils.width(setting.getName()), parent.posY + y + 16);
+        if (hovered && slideAnim < 0.5f) currentBg = new Color(60, 60, 65).getRGB();
 
-        FontUtils.drawString(guiGraphics, setting.getName(), (int)(parent.posX + x + 30), (int)(parent.posY + y + 2), new Color(200, 200, 200).getRGB(), false);
+        // Rounded Pill Background
+        AnimationUtil.drawRoundedRect(guiGraphics, (int)(parent.posX + x), (int)(parent.posY + y), 32, 16, 8, currentBg);
+        
+        // Sliding Knob
+        int knobX = (int)(parent.posX + x + 2 + (slideAnim * 16));
+        AnimationUtil.drawRoundedRect(guiGraphics, knobX, (int)(parent.posY + y + 2), 12, 12, 6, -1);
+
+        FontUtils.drawString(guiGraphics, setting.getName(), (int)(parent.posX + x + 42), (int)(parent.posY + y + 4), new Color(220, 220, 220).getRGB(), false);
     }
 
     @Override
     public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (isInside(mouseX, mouseY, parent.posX + x, parent.posY + y, parent.posX + x + 24 + FontUtils.width(setting.getName()), parent.posY + y + 12) && mouseButton == 0) {
+        if (isInside(mouseX, mouseY, parent.posX + x, parent.posY + y, parent.posX + x + 35 + FontUtils.width(setting.getName()), parent.posY + y + 16) && mouseButton == 0) {
             setting.setValBoolean(!setting.getValBoolean());
             Clickgui.playSound();
         }

@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3d;
 import java.awt.Color;
 
+@SuppressWarnings("deprecation")
 public class ESP extends Module {
 
     public ESP() {
@@ -39,17 +40,7 @@ public class ESP extends Module {
 
             if (entity instanceof Player || (entity instanceof Mob && showMobs)) {
                 
-                double x = entity.xOld + (entity.getX() - entity.xOld) * deltaTicks;
-                double y = entity.yOld + (entity.getY() - entity.yOld) * deltaTicks;
-                double z = entity.zOld + (entity.getZ() - entity.zOld) * deltaTicks;
-                
-                float width = entity.getBbWidth() / 2.0f;
-                float height = entity.getBbHeight();
-
-                double[][] corners = {
-                    {x - width, y, z - width}, {x + width, y, z - width}, {x - width, y + height, z - width}, {x + width, y + height, z - width},
-                    {x - width, y, z + width}, {x + width, y, z + width}, {x - width, y + height, z + width}, {x + width, y + height, z + width}
-                };
+                double[][] corners = getCorners(entity, deltaTicks);
 
                 double screenMinX = Double.MAX_VALUE; double screenMinY = Double.MAX_VALUE;
                 double screenMaxX = Double.MIN_VALUE; double screenMaxY = Double.MIN_VALUE;
@@ -114,5 +105,19 @@ if (projs[i] != null) {
             }
         } catch (Exception e) {}
         return 1.0f;
+    }
+
+    private double[][] getCorners(Entity entity, float deltaTicks) {
+        double x = entity.xOld + (entity.getX() - entity.xOld) * deltaTicks;
+        double y = entity.yOld + (entity.getY() - entity.yOld) * deltaTicks;
+        double z = entity.zOld + (entity.getZ() - entity.zOld) * deltaTicks;
+        
+        float width = entity.getBbWidth() / 2.0f;
+        float height = entity.getBbHeight();
+
+        return new double[][] {
+            {x - width, y, z - width}, {x + width, y, z - width}, {x - width, y + height, z - width}, {x + width, y + height, z - width},
+            {x - width, y, z + width}, {x + width, y, z + width}, {x - width, y + height, z + width}, {x + width, y + height, z + width}
+        };
     }
 }

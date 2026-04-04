@@ -3,10 +3,7 @@
 "minVersion": "0.8",
 "package": "com.eclipseware.imnotcheatingyouare.mixin",
 "compatibilityLevel": "JAVA_21",
-"refmap": "imnotcheatingyouare-refmap.json",
 "mixins": [
-"EntityGlowMixin",
-"HandViewMixin"
 ],
 "injectors": {
     "defaultRequire": 1

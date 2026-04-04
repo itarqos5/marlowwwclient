@@ -23,6 +23,7 @@ public class ImnotcheatingyouareClient implements ClientModInitializer {
     private KeyMapping guiBind;
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onInitializeClient() {
         INSTANCE = this;
         moduleManager = new ModuleManager();
@@ -34,8 +35,10 @@ public class ImnotcheatingyouareClient implements ClientModInitializer {
         Module noJumpDelay = new Module("NoJumpDelay", Category.Movement);
         Module aimAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.AimAssist();
         Module triggerbot = new com.eclipseware.imnotcheatingyouare.client.module.impl.Triggerbot();
-        Module hitSelect = new com.eclipseware.imnotcheatingyouare.client.module.impl.HitSelect();
+        Module wTap = new com.eclipseware.imnotcheatingyouare.client.module.impl.WTap();
+Module hitSelect = new com.eclipseware.imnotcheatingyouare.client.module.impl.HitSelect();
         Module autoShieldBreaker = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoShieldBreaker();
+        Module kbDisplacement = new com.eclipseware.imnotcheatingyouare.client.module.impl.KnockbackDisplacement();
         Module arrayListMod = new com.eclipseware.imnotcheatingyouare.client.module.impl.ArrayListMod();
         Module nameProtect = new com.eclipseware.imnotcheatingyouare.client.module.impl.NameProtect();
         Module breachSwap = new com.eclipseware.imnotcheatingyouare.client.module.impl.BreachSwap();
@@ -53,9 +56,11 @@ Module jumpReset = new com.eclipseware.imnotcheatingyouare.client.module.impl.Ju
         moduleManager.modules.add(autoSprint);
         moduleManager.modules.add(noJumpDelay);
         moduleManager.modules.add(aimAssist);
+        moduleManager.modules.add(wTap);
         moduleManager.modules.add(triggerbot);
         moduleManager.modules.add(hitSelect);
         moduleManager.modules.add(autoShieldBreaker);
+        moduleManager.modules.add(kbDisplacement);
         moduleManager.modules.add(arrayListMod);
         moduleManager.modules.add(nameProtect);
         moduleManager.modules.add(breachSwap);
@@ -70,19 +75,45 @@ moduleManager.modules.add(configurator);
         moduleManager.modules.add(tracers);
         moduleManager.modules.add(nametags);
 
+        Module automine = new com.eclipseware.imnotcheatingyouare.client.module.impl.Automine();
+        Module autowalk = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoWalk();
+        Module guimove = new com.eclipseware.imnotcheatingyouare.client.module.impl.GUIMove();
+        Module autosign = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoSign();
+        Module freecam = new com.eclipseware.imnotcheatingyouare.client.module.impl.Freecam();
+
+        moduleManager.modules.add(automine);
+        moduleManager.modules.add(autowalk);
+        moduleManager.modules.add(guimove);
+        moduleManager.modules.add(autosign);
+        moduleManager.modules.add(freecam);
+        moduleManager.modules.add(new com.eclipseware.imnotcheatingyouare.client.module.impl.AntiTranslationKey());
+
+        Module theme = new Module("Theme", Category.Render, "Customizes the client's UI colors and animations.");
+        moduleManager.modules.add(theme);
+
         // --- REGISTER SETTINGS ---
+        settingsManager.rSetting(new Setting("Accent R", theme, 155.0, 0.0, 255.0, true));
+        settingsManager.rSetting(new Setting("Accent G", theme, 60.0, 0.0, 255.0, true));
+        settingsManager.rSetting(new Setting("Accent B", theme, 255.0, 0.0, 255.0, true));
+        settingsManager.rSetting(new Setting("Background Alpha", theme, 240.0, 0.0, 255.0, true));
+        settingsManager.rSetting(new Setting("Anim Speed", theme, 5.0, 1.0, 10.0, false));
+
         java.util.ArrayList<String> aimModes = new java.util.ArrayList<>();
-        aimModes.add("Wind"); aimModes.add("Smooth"); aimModes.add("Snap");
-        settingsManager.rSetting(new Setting("Mode", aimAssist, "Wind", aimModes));
-        settingsManager.rSetting(new Setting("Smoothness", aimAssist, 5.0, 1.0, 10.0, false));
-        settingsManager.rSetting(new Setting("Speed", aimAssist, 5.0, 1.0, 10.0, false));
-        settingsManager.rSetting(new Setting("Ignore Mouse %", aimAssist, 20.0, 0.0, 100.0, true));
+        aimModes.add("Human"); aimModes.add("Smooth"); aimModes.add("Linear");
+        settingsManager.rSetting(new Setting("Mode", aimAssist, "Human", aimModes));
+        settingsManager.rSetting(new Setting("Smoothness", aimAssist, 7.0, 1.0, 10.0, false));
+        settingsManager.rSetting(new Setting("Speed", aimAssist, 3.0, 1.0, 10.0, false));
+        settingsManager.rSetting(new Setting("Ignore Mouse %", aimAssist, 40.0, 0.0, 100.0, true));
+        settingsManager.rSetting(new Setting("Attack Only", aimAssist, true));
         settingsManager.rSetting(new Setting("Stop On Target", aimAssist, true));
-        settingsManager.rSetting(new Setting("FOV", aimAssist, 90.0, 10.0, 360.0, true));
+        settingsManager.rSetting(new Setting("FOV", aimAssist, 60.0, 10.0, 360.0, true));
         settingsManager.rSetting(new Setting("Range", aimAssist, 4.0, 1.0, 8.0, false));
         settingsManager.rSetting(new Setting("Players", aimAssist, true));
         settingsManager.rSetting(new Setting("Hostile Mobs", aimAssist, true));
         settingsManager.rSetting(new Setting("Passive Mobs", aimAssist, false));
+
+        settingsManager.rSetting(new Setting("Wait Ticks", wTap, 0.0, 0.0, 10.0, true));
+        settingsManager.rSetting(new Setting("Action Ticks", wTap, 1.0, 1.0, 5.0, true));
 
         java.util.ArrayList<String> tbModes = new java.util.ArrayList<>();
         tbModes.add("Legit"); tbModes.add("Blatant");
@@ -111,12 +142,23 @@ moduleManager.modules.add(configurator);
         settingsManager.rSetting(new Setting("Swap Back", autoShieldBreaker, true));
         settingsManager.rSetting(new Setting("Swap Back Delay (ms)", autoShieldBreaker, 100.0, 0.0, 1000.0, true));
 
+        java.util.ArrayList<String> kbModes = new java.util.ArrayList<>();
+        kbModes.add("Pull"); kbModes.add("Upward"); kbModes.add("Horizontal"); kbModes.add("Custom");
+        settingsManager.rSetting(new Setting("Mode", kbDisplacement, "Pull", kbModes));
+        settingsManager.rSetting(new Setting("Auto Sprint", kbDisplacement, true));
+        settingsManager.rSetting(new Setting("Delay (Ticks)", kbDisplacement, 2.0, 0.0, 5.0, true));
+        settingsManager.rSetting(new Setting("Cooldown (Ticks)", kbDisplacement, 15.0, 0.0, 40.0, true));
+        settingsManager.rSetting(new Setting("Custom Yaw", kbDisplacement, 0.0, -180.0, 180.0, true));
+        settingsManager.rSetting(new Setting("Custom Pitch", kbDisplacement, 0.0, -90.0, 90.0, true));
+
         java.util.ArrayList<String> alAlignments = new java.util.ArrayList<>();
         alAlignments.add("Left"); alAlignments.add("Right");
         settingsManager.rSetting(new Setting("Alignment", arrayListMod, "Left", alAlignments));
+        settingsManager.rSetting(new Setting("Sync Theme", arrayListMod, true));
         settingsManager.rSetting(new Setting("Red", arrayListMod, 230.0, 0.0, 255.0, true));
         settingsManager.rSetting(new Setting("Green", arrayListMod, 10.0, 0.0, 255.0, true));
         settingsManager.rSetting(new Setting("Blue", arrayListMod, 230.0, 0.0, 255.0, true));
+        settingsManager.rSetting(new Setting("Y Offset", arrayListMod, 5.0, 0.0, 100.0, true));
 
         java.util.ArrayList<String> npNames = new java.util.ArrayList<>();
         npNames.add("Marlowww"); npNames.add("Hidden"); npNames.add("You");
@@ -125,10 +167,13 @@ moduleManager.modules.add(configurator);
 
         java.util.ArrayList<String> bsModes = new java.util.ArrayList<>();
 bsModes.add("Swap"); bsModes.add("Silent");
-settingsManager.rSetting(new Setting("Mode", breachSwap, "Swap", bsModes));
-settingsManager.rSetting(new Setting("Swap Back", breachSwap, true));
-settingsManager.rSetting(new Setting("Swap Back Delay (ms)", breachSwap, 100.0, 0.0, 1000.0, true));
-java.util.ArrayList<String> jrModes = new java.util.ArrayList<>();
+        settingsManager.rSetting(new Setting("Mode", breachSwap, "Swap", bsModes));
+        settingsManager.rSetting(new Setting("Swap Back", breachSwap, true));
+        settingsManager.rSetting(new Setting("Swap Back Delay (ms)", breachSwap, 100.0, 0.0, 1000.0, true));
+        
+        settingsManager.rSetting(new Setting("AutoJump", lungeAssist, true));
+
+        java.util.ArrayList<String> jrModes = new java.util.ArrayList<>();
 jrModes.add("Legit"); jrModes.add("Blatant");
 settingsManager.rSetting(new Setting("Mode", jumpReset, "Legit", jrModes));
 settingsManager.rSetting(new Setting("Delay (Ticks)", jumpReset, 0.0, 0.0, 5.0, true));
@@ -198,8 +243,10 @@ settingsManager.rSetting(new Setting("Show Mobs", tracers, false));
         // 4. Load Configuration
         com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager.load();
 
-        // 5. Save config if the user closes the game unexpectedly
-        Runtime.getRuntime().addShutdownHook(new Thread(com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager::save));
+        // 5. Save config if the user closes the game unexpectedly (with daemon thread patch)
+        Thread saveHook = new Thread(com.eclipseware.imnotcheatingyouare.client.setting.ConfigManager::save, "ConfigSaveHook");
+        saveHook.setDaemon(true);
+        Runtime.getRuntime().addShutdownHook(saveHook);
 
         // 6. Register Real Client Commands
         net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {

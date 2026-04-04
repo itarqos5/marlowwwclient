@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import org.joml.Vector3d;
 import java.awt.Color;
 
+@SuppressWarnings("deprecation")
 public class Tracers extends Module {
 
     public Tracers() {

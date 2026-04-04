@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3d;
 import java.awt.Color;
 
+@SuppressWarnings("deprecation")
 public class Nametags extends Module {
 
     public Nametags() {

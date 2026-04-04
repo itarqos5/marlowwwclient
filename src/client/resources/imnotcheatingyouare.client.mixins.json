@@ -3,16 +3,20 @@
 "minVersion": "0.8",
 "package": "com.eclipseware.imnotcheatingyouare.mixin.client",
 "compatibilityLevel": "JAVA_21",
-"refmap": "imnotcheatingyouare-refmap.json",
 "client": [
 "NoJumpDelayMixin",
 "AutoSprintMixin",
 "LightTextureMixin",
 "MultiPlayerGameModeMixin",
-"ChatComponentMixin",
 "PlayerTabOverlayMixin",
 "MinecraftAccessor",
-"JumpResetMixin"
+"JumpResetMixin",
+"AutoSignScreenMixin",
+"ConnectionMixin",
+"ClientPacketListenerMixin",
+"WTapMixin",
+"EntityGlowMixin",
+"HandViewMixin"
 ],
 "injectors": {
 "defaultRequire": 1

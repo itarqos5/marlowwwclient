@@ -1,4 +1,4 @@
-package com.eclipseware.imnotcheatingyouare.mixin;
+package com.eclipseware.imnotcheatingyouare.mixin.client;
 
 import com.eclipseware.imnotcheatingyouare.client.ImnotcheatingyouareClient;
 import com.eclipseware.imnotcheatingyouare.client.module.impl.ESP;
@@ -50,11 +50,10 @@ public abstract class EntityGlowMixin {
                 Setting showMobs = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(esp, "Show Mobs");
                 boolean mobs = showMobs != null && showMobs.getValBoolean();
 
-                // 0x9B3CFF is our custom Neon Violet hex color!
                 if (entity instanceof Player && entity != Minecraft.getInstance().player) {
                     cir.setReturnValue(0x9B3CFF);
                 } else if (entity instanceof Mob && mobs) {
-                    cir.setReturnValue(0xFF6432); // Orange for Mobs
+                    cir.setReturnValue(0xFF6432); 
                 }
             }
         }
