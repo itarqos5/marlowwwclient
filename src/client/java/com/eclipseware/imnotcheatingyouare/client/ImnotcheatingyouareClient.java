@@ -78,6 +78,7 @@ Module storageESP = new com.eclipseware.imnotcheatingyouare.client.module.impl.S
 Module blockESP = new com.eclipseware.imnotcheatingyouare.client.module.impl.BlockESP();
 Module killAura = new com.eclipseware.imnotcheatingyouare.client.module.impl.KillAura();
 Module detectionAlert = new com.eclipseware.imnotcheatingyouare.client.module.impl.DetectionAlert();
+Module backtrack = new com.eclipseware.imnotcheatingyouare.client.module.impl.Backtrack();
 
         moduleManager.modules.add(autoSprint);
 moduleManager.modules.add(noJumpDelay);
@@ -116,6 +117,7 @@ moduleManager.modules.add(silentAim);
 moduleManager.modules.add(storageESP);
 moduleManager.modules.add(blockESP);
 moduleManager.modules.add(killAura);
+moduleManager.modules.add(backtrack);
 
         Module automine = new com.eclipseware.imnotcheatingyouare.client.module.impl.Automine();
 Module autowalk = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoWalk();
@@ -316,9 +318,21 @@ settingsManager.rSetting(new Setting("Delay (Ticks)", pearlCatch, 4.0, 0.0, 20.0
         settingsManager.rSetting(new Setting("Off Pos Z", handView, 0.0, -2.0, 2.0, false));
 
         java.util.ArrayList<String> espModes = new java.util.ArrayList<>();
-        espModes.add("Outline"); espModes.add("3D"); espModes.add("2D"); espModes.add("Hybrid");
+        espModes.add("Outline"); espModes.add("2D"); espModes.add("Hybrid"); espModes.add("Glow");
         settingsManager.rSetting(new Setting("Mode", esp, "Outline", espModes));
         settingsManager.rSetting(new Setting("Show Mobs", esp, false));
+        settingsManager.rSetting(new Setting("Fill", esp, true));
+        settingsManager.rSetting(new Setting("Health", esp, true));
+        settingsManager.rSetting(new Setting("Names", esp, true));
+        settingsManager.rSetting(new Setting("Outline Thickness", esp, 1.0, 1.0, 5.0, true));
+        settingsManager.rSetting(new Setting("Corner Gap", esp, 50.0, 10.0, 100.0, true));
+        settingsManager.rSetting(new Setting("Border", esp, true));
+
+        settingsManager.rSetting(new Setting("Range", backtrack, 3.0, 1.0, 6.0, false));
+        settingsManager.rSetting(new Setting("Delay", backtrack, 150.0, 50.0, 500.0, true));
+        settingsManager.rSetting(new Setting("Chance", backtrack, 50.0, 0.0, 100.0, true));
+        settingsManager.rSetting(new Setting("Attack Timeout", backtrack, 1000.0, 100.0, 5000.0, true));
+        settingsManager.rSetting(new Setting("Visualizer", backtrack, true));
 
         settingsManager.rSetting(new Setting("Crosshair Attach", tracers, true));
 settingsManager.rSetting(new Setting("Show Mobs", tracers, false));

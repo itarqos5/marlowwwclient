@@ -81,6 +81,10 @@ com.eclipseware.imnotcheatingyouare.client.utils.SilentAimUtil.consume();
             com.eclipseware.imnotcheatingyouare.client.module.impl.AttributeSwap.INSTANCE.onAttack(target);
         }
 
+        if (com.eclipseware.imnotcheatingyouare.client.module.impl.Backtrack.INSTANCE != null) {
+            com.eclipseware.imnotcheatingyouare.client.module.impl.Backtrack.INSTANCE.onAttack(target);
+        }
+
         if (kbShouldRevert) {
             var mc = Minecraft.getInstance();
             if (mc.getConnection() != null) {

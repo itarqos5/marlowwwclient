@@ -23,14 +23,16 @@ public class StorageESP extends Module {
     private int lastUpdateTick = -999;
     public StorageESP() {
         super("StorageESP", Category.Render, "Highlights storage blocks like chests, barrels, and shulker boxes.");
-        HudRenderCallback.EVENT.register((guiGraphics, tickCounter) -> onRenderHUD(guiGraphics));
+        HudRenderCallback.EVENT.register((guiGraphics, tickCounter) -> onRenderHUD(guiGraphics, tickCounter));
     }
 
-    private void onRenderHUD(GuiGraphics guiGraphics) {
+    private void onRenderHUD(GuiGraphics guiGraphics, Object tickDeltaObj) {
         if (!isToggled() || mc.player == null || mc.level == null) {
             cache.clear();
             return;
         }
+
+        float partialTick = getTickDelta(tickDeltaObj);
 
         Setting tracersSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Tracers");
         Setting fillSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Fill");
@@ -80,10 +82,10 @@ public class StorageESP extends Module {
         double screenCenterY = mc.getWindow().getGuiScaledHeight() / 2.0;
 
         for (CachedBlock cb : cache) {
-            Vector3d screenPos = RenderUtils.project2D(cb.pos.getX() + 0.5, cb.pos.getY() + 0.5, cb.pos.getZ() + 0.5, 1.0f);
+            Vector3d screenPos = RenderUtils.project2D(cb.pos.getX() + 0.5, cb.pos.getY() + 0.5, cb.pos.getZ() + 0.5, partialTick);
             if (screenPos != null && screenPos.z > 0 && screenPos.z < 1.0) {
                 if (showTracers) RenderUtils.drawLine2D(guiGraphics, screenCenterX, screenCenterY, screenPos.x, screenPos.y, cb.color);
-                if (doFill || doOutline) drawStorageBox(guiGraphics, cb.pos, cb.color, doFill, doOutline);
+                if (doFill || doOutline) drawStorageBox(guiGraphics, cb.pos, cb.color, doFill, doOutline, partialTick);
             }
         }
     }
@@ -119,16 +121,16 @@ public class StorageESP extends Module {
         return null;
     }
 
-    private void drawStorageBox(GuiGraphics guiGraphics, BlockPos pos, Color color, boolean fill, boolean outline) {
+    private void drawStorageBox(GuiGraphics guiGraphics, BlockPos pos, Color color, boolean fill, boolean outline, float partialTick) {
         Vector3d[] corners = new Vector3d[8];
-        corners[0] = RenderUtils.project2D(pos.getX(), pos.getY(), pos.getZ(), 1.0f);
-        corners[1] = RenderUtils.project2D(pos.getX() + 1, pos.getY(), pos.getZ(), 1.0f);
-        corners[2] = RenderUtils.project2D(pos.getX(), pos.getY() + 1, pos.getZ(), 1.0f);
-        corners[3] = RenderUtils.project2D(pos.getX() + 1, pos.getY() + 1, pos.getZ(), 1.0f);
-        corners[4] = RenderUtils.project2D(pos.getX(), pos.getY(), pos.getZ() + 1, 1.0f);
-        corners[5] = RenderUtils.project2D(pos.getX() + 1, pos.getY(), pos.getZ() + 1, 1.0f);
-        corners[6] = RenderUtils.project2D(pos.getX(), pos.getY() + 1, pos.getZ() + 1, 1.0f);
-        corners[7] = RenderUtils.project2D(pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1, 1.0f);
+        corners[0] = RenderUtils.project2D(pos.getX(), pos.getY(), pos.getZ(), partialTick);
+        corners[1] = RenderUtils.project2D(pos.getX() + 1, pos.getY(), pos.getZ(), partialTick);
+        corners[2] = RenderUtils.project2D(pos.getX(), pos.getY() + 1, pos.getZ(), partialTick);
+        corners[3] = RenderUtils.project2D(pos.getX() + 1, pos.getY() + 1, pos.getZ(), partialTick);
+        corners[4] = RenderUtils.project2D(pos.getX(), pos.getY(), pos.getZ() + 1, partialTick);
+        corners[5] = RenderUtils.project2D(pos.getX() + 1, pos.getY(), pos.getZ() + 1, partialTick);
+        corners[6] = RenderUtils.project2D(pos.getX(), pos.getY() + 1, pos.getZ() + 1, partialTick);
+        corners[7] = RenderUtils.project2D(pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1, partialTick);
 
         double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
@@ -161,5 +163,22 @@ public class StorageESP extends Module {
         int b = bSetting != null ? (int) bSetting.getValDouble() : 255;
 
         return new Color(r, g, b);
+    }
+    
+    private float getTickDelta(Object tickDeltaObj) {
+        if (tickDeltaObj instanceof Float) return (Float) tickDeltaObj;
+        for (java.lang.reflect.Method m : tickDeltaObj.getClass().getMethods()) {
+            if (m.getReturnType() == float.class) {
+                if (m.getParameterCount() == 1 && m.getParameterTypes()[0] == boolean.class) {
+                    try { return (float) m.invoke(tickDeltaObj, true); } catch (Exception e) {}
+                } else if (m.getParameterCount() == 0) {
+                    String name = m.getName().toLowerCase();
+                    if (name.contains("tick") || name.contains("delta") || name.contains("frame")) {
+                        try { return (float) m.invoke(tickDeltaObj); } catch (Exception e) {}
+                    }
+                }
+            }
+        }
+        return 1.0f;
     }
 }

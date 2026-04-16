@@ -22,11 +22,13 @@ public class Nametags extends Module {
 
     public Nametags() {
         super("Nametags", Category.Render);
-        HudRenderCallback.EVENT.register((guiGraphics, tickDelta) -> onHudRender(guiGraphics));
+        HudRenderCallback.EVENT.register((guiGraphics, tickDelta) -> onHudRender(guiGraphics, tickDelta));
     }
 
-    private void onHudRender(GuiGraphics guiGraphics) {
+    private void onHudRender(GuiGraphics guiGraphics, Object tickDeltaObj) {
         if (!isToggled() || mc.player == null || mc.level == null) return;
+
+        float partialTick = getTickDelta(tickDeltaObj);
 
         Setting playersSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Players");
         boolean showPlayers = playersSetting == null || playersSetting.getValBoolean();
@@ -46,8 +48,11 @@ public class Nametags extends Module {
             double dist = mc.player.distanceTo(entity);
             if (dist > 64.0) continue;
 
-            Vector3d proj = RenderUtils.project2D(
-                entity.getX(), entity.getY() + entity.getBbHeight() + 0.4, entity.getZ(), 1.0f);
+            double ex = net.minecraft.util.Mth.lerp(partialTick, entity.xo, entity.getX());
+            double ey = net.minecraft.util.Mth.lerp(partialTick, entity.yo, entity.getY()) + entity.getBbHeight() + 0.4;
+            double ez = net.minecraft.util.Mth.lerp(partialTick, entity.zo, entity.getZ());
+
+            Vector3d proj = RenderUtils.project2D(ex, ey, ez, partialTick);
             if (proj == null || proj.z <= 0 || proj.z >= 1.0) continue;
 
             float alpha = Math.max(0.3f, 1.0f - (float)(dist / 64.0));
@@ -95,5 +100,22 @@ public class Nametags extends Module {
                 }
             }
         }
+    }
+
+    private float getTickDelta(Object tickDeltaObj) {
+        if (tickDeltaObj instanceof Float) return (Float) tickDeltaObj;
+        for (java.lang.reflect.Method m : tickDeltaObj.getClass().getMethods()) {
+            if (m.getReturnType() == float.class) {
+                if (m.getParameterCount() == 1 && m.getParameterTypes()[0] == boolean.class) {
+                    try { return (float) m.invoke(tickDeltaObj, true); } catch (Exception e) {}
+                } else if (m.getParameterCount() == 0) {
+                    String name = m.getName().toLowerCase();
+                    if (name.contains("tick") || name.contains("delta") || name.contains("frame")) {
+                        try { return (float) m.invoke(tickDeltaObj); } catch (Exception e) {}
+                    }
+                }
+            }
+        }
+        return 1.0f;
     }
 }

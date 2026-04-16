@@ -28,6 +28,8 @@ public class BlockESP extends Module {
 
     private void onRenderHUD(GuiGraphics guiGraphics, Object tickCounterObj) {
         if (!isToggled() || mc.player == null || mc.level == null) return;
+        
+        float partialTick = getTickDelta(tickCounterObj);
 
         Setting fpsSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "FPS");
         double targetFPS = fpsSetting != null ? fpsSetting.getValDouble() : 30;
@@ -60,7 +62,7 @@ public class BlockESP extends Module {
                     if (!selectedBlocks.contains(blockName)) continue;
                     
                     Color color = getColorForBlock(blockName);
-                    Vector3d screenPos = RenderUtils.project2D(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1.0f);
+                    Vector3d screenPos = RenderUtils.project2D(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, partialTick);
                     
                     if (screenPos != null && screenPos.z > 0 && screenPos.z < 1.0) {
                         if (showTracers) {
@@ -70,7 +72,7 @@ public class BlockESP extends Module {
                                 screenPos.x, screenPos.y, color);
                         }
                         if (doFill || doOutline) {
-                            drawBlockBox(guiGraphics, pos, color, doFill, doOutline);
+                            drawBlockBox(guiGraphics, pos, color, doFill, doOutline, partialTick);
                         }
                     }
                 }
@@ -78,16 +80,16 @@ public class BlockESP extends Module {
         }
     }
 
-    private void drawBlockBox(GuiGraphics guiGraphics, BlockPos pos, Color color, boolean fill, boolean outline) {
+    private void drawBlockBox(GuiGraphics guiGraphics, BlockPos pos, Color color, boolean fill, boolean outline, float partialTick) {
         Vector3d[] corners = new Vector3d[8];
-        corners[0] = RenderUtils.project2D(pos.getX(), pos.getY(), pos.getZ(), 1.0f);
-        corners[1] = RenderUtils.project2D(pos.getX() + 1, pos.getY(), pos.getZ(), 1.0f);
-        corners[2] = RenderUtils.project2D(pos.getX(), pos.getY() + 1, pos.getZ(), 1.0f);
-        corners[3] = RenderUtils.project2D(pos.getX() + 1, pos.getY() + 1, pos.getZ(), 1.0f);
-        corners[4] = RenderUtils.project2D(pos.getX(), pos.getY(), pos.getZ() + 1, 1.0f);
-        corners[5] = RenderUtils.project2D(pos.getX() + 1, pos.getY(), pos.getZ() + 1, 1.0f);
-        corners[6] = RenderUtils.project2D(pos.getX(), pos.getY() + 1, pos.getZ() + 1, 1.0f);
-        corners[7] = RenderUtils.project2D(pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1, 1.0f);
+        corners[0] = RenderUtils.project2D(pos.getX(), pos.getY(), pos.getZ(), partialTick);
+        corners[1] = RenderUtils.project2D(pos.getX() + 1, pos.getY(), pos.getZ(), partialTick);
+        corners[2] = RenderUtils.project2D(pos.getX(), pos.getY() + 1, pos.getZ(), partialTick);
+        corners[3] = RenderUtils.project2D(pos.getX() + 1, pos.getY() + 1, pos.getZ(), partialTick);
+        corners[4] = RenderUtils.project2D(pos.getX(), pos.getY(), pos.getZ() + 1, partialTick);
+        corners[5] = RenderUtils.project2D(pos.getX() + 1, pos.getY(), pos.getZ() + 1, partialTick);
+        corners[6] = RenderUtils.project2D(pos.getX(), pos.getY() + 1, pos.getZ() + 1, partialTick);
+        corners[7] = RenderUtils.project2D(pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1, partialTick);
 
         double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
@@ -155,5 +157,22 @@ public class BlockESP extends Module {
 
     public Set<String> getSelectedBlocks() {
         return new HashSet<>(selectedBlocks);
+    }
+    
+    private float getTickDelta(Object tickDeltaObj) {
+        if (tickDeltaObj instanceof Float) return (Float) tickDeltaObj;
+        for (java.lang.reflect.Method m : tickDeltaObj.getClass().getMethods()) {
+            if (m.getReturnType() == float.class) {
+                if (m.getParameterCount() == 1 && m.getParameterTypes()[0] == boolean.class) {
+                    try { return (float) m.invoke(tickDeltaObj, true); } catch (Exception e) {}
+                } else if (m.getParameterCount() == 0) {
+                    String name = m.getName().toLowerCase();
+                    if (name.contains("tick") || name.contains("delta") || name.contains("frame")) {
+                        try { return (float) m.invoke(tickDeltaObj); } catch (Exception e) {}
+                    }
+                }
+            }
+        }
+        return 1.0f;
     }
 }
