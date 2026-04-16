@@ -26,6 +26,7 @@ logs/
 # Run directory (Minecraft)
 run/
 .ai_backups
+SESSION_HANDOFF.md
 
 dist/
 *.exe
