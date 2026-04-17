@@ -6,8 +6,11 @@ import com.eclipseware.imnotcheatingyouare.client.module.Module;
 import com.eclipseware.imnotcheatingyouare.client.setting.Setting;
 import com.eclipseware.imnotcheatingyouare.client.utils.FriendManager;
 import com.eclipseware.imnotcheatingyouare.client.utils.RenderUtils;
+import com.eclipseware.imnotcheatingyouare.client.utils.cheat.TimerUtil;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.PacketListener;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -16,10 +19,25 @@ import org.joml.Vector3d;
 
 import java.awt.Color;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Backtrack extends Module {
+    public static Backtrack INSTANCE;
+    
+    private static final ConcurrentLinkedQueue<QueuedPacket> PACKET_QUEUE = new ConcurrentLinkedQueue<>();
+    private static final AtomicLong LATENCY_TIMER = new AtomicLong(0);
+    private static final List<Entity> TRACKED_ENTITIES = new ArrayList<>();
+    private static volatile boolean isActive = false;
+
+    private TimerUtil pulseTimer = new TimerUtil();
+    private TimerUtil dumpCooldown = new TimerUtil();
 
     private static final class TrackedPos {
         final long timestamp;
@@ -30,12 +48,10 @@ public class Backtrack extends Module {
         }
     }
 
-    private final java.util.Map<Integer, Deque<TrackedPos>> positionHistory = new java.util.concurrent.ConcurrentHashMap<>();
+    private final Map<Integer, Deque<TrackedPos>> positionHistory = new ConcurrentHashMap<>();
     private Entity target;
     private long lastAttackTime = 0;
     private int currentChance = 0;
-
-    public static Backtrack INSTANCE;
 
     public Backtrack() {
         super("Backtrack", Category.Combat, "Delays entity position updates to extend hitbox window.");
@@ -43,8 +59,44 @@ public class Backtrack extends Module {
         HudRenderCallback.EVENT.register((guiGraphics, tickDelta) -> renderBacktrack(guiGraphics, tickDelta));
     }
 
+    public static void queuePacket(Packet<?> packet) {
+        if (!isActive) return;
+        PACKET_QUEUE.offer(new QueuedPacket(packet, System.currentTimeMillis()));
+    }
+
+    public static boolean isActive() {
+        return isActive;
+    }
+
+    public static ConcurrentLinkedQueue<QueuedPacket> getPacketQueue() {
+        return PACKET_QUEUE;
+    }
+
+    public static void setLatencyTimer(long timer) {
+        LATENCY_TIMER.set(timer);
+    }
+
+    public static void addTrackedEntity(Entity entity) {
+        if (!TRACKED_ENTITIES.contains(entity)) {
+            TRACKED_ENTITIES.add(entity);
+        }
+    }
+
+    public static List<Entity> getTrackedEntities() {
+        return new ArrayList<>(TRACKED_ENTITIES);
+    }
+
     @Override
     public void onEnable() {
+        isActive = true;
+        PACKET_QUEUE.clear();
+        Setting delayMin = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Delay Min (ms)");
+        Setting delayMax = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Delay Max (ms)");
+        long min = delayMin != null ? (long) delayMin.getValDouble() : 100L;
+        long max = delayMax != null ? (long) delayMax.getValDouble() : 500L;
+        LATENCY_TIMER.set((long) (min + Math.random() * (max - min)));
+        pulseTimer.reset();
+        dumpCooldown.reset();
         positionHistory.clear();
         target = null;
         currentChance = (int)(Math.random() * 100);
@@ -52,12 +104,39 @@ public class Backtrack extends Module {
 
     @Override
     public void onDisable() {
+        isActive = false;
+        dumpPackets(false);
+        TRACKED_ENTITIES.clear();
         positionHistory.clear();
         target = null;
     }
 
     @Override
     public void onTick() {
+        if (mc.player == null || mc.getConnection() == null) {
+            PACKET_QUEUE.clear();
+            return;
+        }
+
+        Setting modeSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Mode");
+        String mode = modeSetting != null ? modeSetting.getValString() : "Latency";
+
+        Setting delayMin = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Delay Min (ms)");
+        Setting delayMax = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Delay Max (ms)");
+        long min = delayMin != null ? (long) delayMin.getValDouble() : 100L;
+        long max = delayMax != null ? (long) delayMax.getValDouble() : 500L;
+
+        switch (mode) {
+            case "Pulse" -> {
+                if (pulseTimer.hasElapsedTime((long) (min + Math.random() * (max - min)))) {
+                    dumpPackets(false);
+                    pulseTimer.reset();
+                }
+            }
+            case "Latency" -> dumpPackets(true);
+            default -> dumpPackets(true);
+        }
+
         if (!isToggled() || mc.player == null || mc.level == null) return;
 
         Setting rangeSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Range");
@@ -107,14 +186,63 @@ public class Backtrack extends Module {
             currentChance = (int)(Math.random() * 100);
         }
 
-        Iterator<java.util.Map.Entry<Integer, Deque<TrackedPos>>> it = positionHistory.entrySet().iterator();
+        Iterator<Map.Entry<Integer, Deque<TrackedPos>>> it = positionHistory.entrySet().iterator();
         while (it.hasNext()) {
-            java.util.Map.Entry<Integer, Deque<TrackedPos>> entry = it.next();
+            Map.Entry<Integer, Deque<TrackedPos>> entry = it.next();
             if (target == null || entry.getKey() != target.getId()) {
                 it.remove();
             }
         }
     }
+
+    private void dumpPackets(boolean latencyOnly) {
+        if (mc.getConnection() == null) {
+            PACKET_QUEUE.clear();
+            return;
+        }
+
+        int guard = 0;
+        while (!PACKET_QUEUE.isEmpty() && guard++ < 1000) {
+            QueuedPacket queued = PACKET_QUEUE.peek();
+            if (queued == null) break;
+
+            if (latencyOnly && queued.timestamp > 0 && queued.timestamp + LATENCY_TIMER.get() >= System.currentTimeMillis()) {
+                break;
+            }
+
+            try {
+                @SuppressWarnings("unchecked")
+                Packet<net.minecraft.network.PacketListener> typed = (Packet<net.minecraft.network.PacketListener>) queued.packet;
+                typed.handle(mc.player.connection);
+            } catch (Throwable ignored) {
+            }
+            PACKET_QUEUE.poll();
+        }
+    }
+
+    public static void dumpAll() {
+        dumpPacketsStatic(false);
+    }
+
+    private static void dumpPacketsStatic(boolean latencyOnly) {
+        if (mc.getConnection() == null) {
+            PACKET_QUEUE.clear();
+            return;
+        }
+        int guard = 0;
+        while (!PACKET_QUEUE.isEmpty() && guard++ < 1000) {
+            QueuedPacket queued = PACKET_QUEUE.poll();
+            if (queued == null) break;
+            try {
+                @SuppressWarnings("unchecked")
+                Packet<net.minecraft.network.PacketListener> typed = (Packet<net.minecraft.network.PacketListener>) queued.packet;
+                typed.handle(mc.player.connection);
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    public static record QueuedPacket(Packet<?> packet, long timestamp) {}
 
     public void onAttack(Entity entity) {
         lastAttackTime = System.currentTimeMillis();

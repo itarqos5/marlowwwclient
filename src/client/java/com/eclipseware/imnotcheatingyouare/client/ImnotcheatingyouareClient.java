@@ -42,35 +42,37 @@ Module autoSprint = new Module("AutoSprint", Category.Movement);
 Module noJumpDelay = new Module("NoJumpDelay", Category.Movement);
 Module aimAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.AimAssist();
 Module triggerbot = new com.eclipseware.imnotcheatingyouare.client.module.impl.Triggerbot();
-        Module autoWeb = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoWeb();
-        Module shieldDrain = new com.eclipseware.imnotcheatingyouare.client.module.impl.ShieldDrain();
-        Module attributeSwap = new com.eclipseware.imnotcheatingyouare.client.module.impl.AttributeSwap();
-        Module autoMaceCounter = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoMaceCounter();
+Module autoWeb = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoWeb();
+Module shieldDrain = new com.eclipseware.imnotcheatingyouare.client.module.impl.ShieldDrain();
+Module attributeSwap = new com.eclipseware.imnotcheatingyouare.client.module.impl.AttributeSwap();
+Module autoMaceCounter = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoMaceCounter();
 Module autoDrain = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoDrain();
-        Module wTap = new com.eclipseware.imnotcheatingyouare.client.module.impl.WTap();
+Module wTap = new com.eclipseware.imnotcheatingyouare.client.module.impl.WTap();
 Module hitSelect = new com.eclipseware.imnotcheatingyouare.client.module.impl.HitSelect();
-        Module autoShieldBreaker = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoShieldBreaker();
-        Module kbDisplacement = new com.eclipseware.imnotcheatingyouare.client.module.impl.KnockbackDisplacement();
-        Module arrayListMod = new com.eclipseware.imnotcheatingyouare.client.module.impl.ArrayListMod();
-        Module nameProtect = new com.eclipseware.imnotcheatingyouare.client.module.impl.NameProtect();
-        Module breachSwap = new com.eclipseware.imnotcheatingyouare.client.module.impl.BreachSwap();
-        Module lungeAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.LungeAssist();
-        Module pearlCatch = new com.eclipseware.imnotcheatingyouare.client.module.impl.PearlCatch();
-        Module jumpReset = new com.eclipseware.imnotcheatingyouare.client.module.impl.JumpReset();
-        
-        Module autoClicker = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoClicker();
-        Module fastPlace = new com.eclipseware.imnotcheatingyouare.client.module.impl.FastPlace();
-        Module bridgeAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.BridgeAssist();
-        Module scaffold = new com.eclipseware.imnotcheatingyouare.client.module.impl.Scaffold();
-        
-        Module xray = new com.eclipseware.imnotcheatingyouare.client.module.impl.Xray();
-        Module elytraBoost = new com.eclipseware.imnotcheatingyouare.client.module.impl.ElytraBoost();
+Module autoShieldBreaker = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoShieldBreaker();
+Module kbDisplacement = new com.eclipseware.imnotcheatingyouare.client.module.impl.KnockbackDisplacement();
+Module arrayListMod = new com.eclipseware.imnotcheatingyouare.client.module.impl.ArrayListMod();
+Module nameProtect = new com.eclipseware.imnotcheatingyouare.client.module.impl.NameProtect();
+Module breachSwap = new com.eclipseware.imnotcheatingyouare.client.module.impl.BreachSwap();
 
-        Module configurator = new com.eclipseware.imnotcheatingyouare.client.module.impl.Configurator();
-        Module fullbright = new com.eclipseware.imnotcheatingyouare.client.module.impl.Fullbright();
-        Module reach = new com.eclipseware.imnotcheatingyouare.client.module.impl.Reach();
-        Module handView = new com.eclipseware.imnotcheatingyouare.client.module.impl.HandView();
-        Module esp = new com.eclipseware.imnotcheatingyouare.client.module.impl.ESP();
+Module lungeAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.LungeAssist();
+Module autoMace = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoMace();
+Module pearlCatch = new com.eclipseware.imnotcheatingyouare.client.module.impl.PearlCatch();
+Module jumpReset = new com.eclipseware.imnotcheatingyouare.client.module.impl.JumpReset();
+
+Module autoClicker = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoClicker();
+Module fastPlace = new com.eclipseware.imnotcheatingyouare.client.module.impl.FastPlace();
+Module bridgeAssist = new com.eclipseware.imnotcheatingyouare.client.module.impl.BridgeAssist();
+Module scaffold = new com.eclipseware.imnotcheatingyouare.client.module.impl.Scaffold();
+
+Module xray = new com.eclipseware.imnotcheatingyouare.client.module.impl.Xray();
+Module elytraBoost = new com.eclipseware.imnotcheatingyouare.client.module.impl.ElytraBoost();
+
+Module configurator = new com.eclipseware.imnotcheatingyouare.client.module.impl.Configurator();
+Module fullbright = new com.eclipseware.imnotcheatingyouare.client.module.impl.Fullbright();
+Module reach = new com.eclipseware.imnotcheatingyouare.client.module.impl.Reach();
+Module handView = new com.eclipseware.imnotcheatingyouare.client.module.impl.HandView();
+Module esp = new com.eclipseware.imnotcheatingyouare.client.module.impl.ESP();
 Module tracers = new com.eclipseware.imnotcheatingyouare.client.module.impl.Tracers();
 Module nametags = new com.eclipseware.imnotcheatingyouare.client.module.impl.Nametags();
 Module silentAim = new com.eclipseware.imnotcheatingyouare.client.module.impl.SilentAim();
@@ -86,6 +88,8 @@ Module anchorMacro = new com.eclipseware.imnotcheatingyouare.client.module.impl.
 Module crystalAura = new com.eclipseware.imnotcheatingyouare.client.module.impl.CrystalAura();
 Module antibot = new com.eclipseware.imnotcheatingyouare.client.module.impl.AntiBot();
 Module teams = new com.eclipseware.imnotcheatingyouare.client.module.impl.Teams();
+Module blink = new com.eclipseware.imnotcheatingyouare.client.module.impl.BlinkModule();
+Module crystalMacro = new com.eclipseware.imnotcheatingyouare.client.module.impl.CrystalMacro();
 
 moduleManager.modules.add(autoSprint);
 moduleManager.modules.add(noJumpDelay);
@@ -97,27 +101,31 @@ moduleManager.modules.add(shieldDrain);
 moduleManager.modules.add(attributeSwap);
 moduleManager.modules.add(autoMaceCounter);
 moduleManager.modules.add(autoDrain);
-        moduleManager.modules.add(hitSelect);
-        moduleManager.modules.add(autoShieldBreaker);
-        moduleManager.modules.add(kbDisplacement);
-        moduleManager.modules.add(arrayListMod);
-        moduleManager.modules.add(nameProtect);
-        moduleManager.modules.add(breachSwap);
-        moduleManager.modules.add(lungeAssist);
-        moduleManager.modules.add(pearlCatch);
-        moduleManager.modules.add(jumpReset);
-        moduleManager.modules.add(autoClicker);
-        moduleManager.modules.add(fastPlace);
-        moduleManager.modules.add(bridgeAssist);
-        moduleManager.modules.add(scaffold);
-        moduleManager.modules.add(xray);
-        moduleManager.modules.add(elytraBoost);
-        moduleManager.modules.add(configurator);
-        moduleManager.modules.add(fullbright);
-        moduleManager.modules.add(reach);
-        moduleManager.modules.add(handView);
-        moduleManager.modules.add(detectionAlert);
-        moduleManager.modules.add(esp);
+moduleManager.modules.add(hitSelect);
+moduleManager.modules.add(autoShieldBreaker);
+moduleManager.modules.add(kbDisplacement);
+moduleManager.modules.add(arrayListMod);
+moduleManager.modules.add(nameProtect);
+moduleManager.modules.add(breachSwap);
+
+moduleManager.modules.add(lungeAssist);
+moduleManager.modules.add(autoMace);
+moduleManager.modules.add(pearlCatch);
+moduleManager.modules.add(jumpReset);
+
+moduleManager.modules.add(autoClicker);
+moduleManager.modules.add(fastPlace);
+moduleManager.modules.add(bridgeAssist);
+moduleManager.modules.add(scaffold);
+moduleManager.modules.add(xray);
+moduleManager.modules.add(elytraBoost);
+moduleManager.modules.add(configurator);
+
+moduleManager.modules.add(fullbright);
+moduleManager.modules.add(reach);
+moduleManager.modules.add(handView);
+moduleManager.modules.add(detectionAlert);
+moduleManager.modules.add(esp);
 moduleManager.modules.add(tracers);
 moduleManager.modules.add(nametags);
 moduleManager.modules.add(silentAim);
@@ -136,44 +144,24 @@ moduleManager.modules.add(antibot);
 moduleManager.modules.add(teams);
 Module renderOptimizer = new com.eclipseware.imnotcheatingyouare.client.module.impl.RenderOptimizer();
 moduleManager.modules.add(renderOptimizer);
-        Module automine = new com.eclipseware.imnotcheatingyouare.client.module.impl.Automine();
+Module automine = new com.eclipseware.imnotcheatingyouare.client.module.impl.Automine();
 Module autowalk = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoWalk();
 Module guimove = new com.eclipseware.imnotcheatingyouare.client.module.impl.GUIMove();
 Module autosign = new com.eclipseware.imnotcheatingyouare.client.module.impl.AutoSign();
-        Module freecam = new com.eclipseware.imnotcheatingyouare.client.module.impl.Freecam();
-        Module friendProtector = new com.eclipseware.imnotcheatingyouare.client.module.impl.FriendProtector();
+Module freecam = new com.eclipseware.imnotcheatingyouare.client.module.impl.Freecam();
+Module friendProtector = new com.eclipseware.imnotcheatingyouare.client.module.impl.FriendProtector();
 moduleManager.modules.add(automine);
 moduleManager.modules.add(autowalk);
 moduleManager.modules.add(guimove);
 moduleManager.modules.add(autosign);
 moduleManager.modules.add(freecam);
 moduleManager.modules.add(friendProtector);
+moduleManager.modules.add(new com.eclipseware.imnotcheatingyouare.client.module.impl.AntiTranslationKey());
 
-java.util.ArrayList<String> kaModes = new java.util.ArrayList<>();
-kaModes.add("Modern (1.9+)"); kaModes.add("Legacy (1.8.9)");
-settingsManager.rSetting(new Setting("Combat System", killAura, "Modern (1.9+)", kaModes));
-settingsManager.rSetting(new Setting("Range", killAura, 4.0, 1.0, 6.0, false));
-settingsManager.rSetting(new Setting("Turn Speed", killAura, 35.0, 5.0, 90.0, false));
-settingsManager.rSetting(new Setting("Modern Delay (Ticks)", killAura, 0.0, 0.0, 10.0, true));
-settingsManager.rSetting(new Setting("1.8.9 Min CPS", killAura, 8.0, 1.0, 20.0, true));
-settingsManager.rSetting(new Setting("1.8.9 Max CPS", killAura, 12.0, 1.0, 20.0, true));
-settingsManager.rSetting(new Setting("Criticals Only", killAura, true));
-settingsManager.rSetting(new Setting("Target Players", killAura, true));
-settingsManager.rSetting(new Setting("Target Mobs", killAura, true));
-settingsManager.rSetting(new Setting("Target Animals", killAura, false));
-settingsManager.rSetting(new Setting("Movement Correction", killAura, true));
+moduleManager.modules.add(blink);
+moduleManager.modules.add(crystalMacro);
 
-settingsManager.rSetting(new Setting("Delay (ms)", autoWeb, 250.0, 0.0, 2000.0, true));
-settingsManager.rSetting(new Setting("Swap Back", autoWeb, true));
-settingsManager.rSetting(new Setting("Smooth Rotation", autoWeb, 2.0, 1.0, 5.0, true));
-settingsManager.rSetting(new Setting("Movement Correction", autoWeb, true));
-settingsManager.rSetting(new Setting("Delay (ms)", autoDrain, 150.0, 0.0, 2000.0, true));
-settingsManager.rSetting(new Setting("Swap Back", autoDrain, true));
-settingsManager.rSetting(new Setting("Smooth Rotation", autoDrain, 2.0, 1.0, 5.0, true));
-settingsManager.rSetting(new Setting("Movement Correction", autoDrain, true));
-        moduleManager.modules.add(new com.eclipseware.imnotcheatingyouare.client.module.impl.AntiTranslationKey());
-
-        Module theme = new Module("Theme", Category.Render, "Customizes the client's UI colors and animations.");
+Module theme = new Module("Theme", Category.Render, "Customizes the client's UI colors and animations.");
         moduleManager.modules.add(theme);
 
         settingsManager.rSetting(new Setting("Accent R", theme, 155.0, 0.0, 255.0, true));
@@ -352,6 +340,25 @@ settingsManager.rSetting(new Setting("Delay (Ticks)", pearlCatch, 4.0, 0.0, 20.0
         settingsManager.rSetting(new Setting("Visualizer", backtrack, true));
 
         settingsManager.rSetting(new Setting("Crosshair Attach", tracers, true));
+
+        settingsManager.rSetting(new Setting("Show Mobs", tracers, false));
+
+        settingsManager.rSetting(new Setting("Players", nametags, true));
+        settingsManager.rSetting(new Setting("Show Mobs", nametags, false));
+
+        java.util.ArrayList<String> btModes = new java.util.ArrayList<>();
+        btModes.add("Latency"); btModes.add("Pulse");
+        settingsManager.rSetting(new Setting("Mode", backtrack, "Latency", btModes));
+        settingsManager.rSetting(new Setting("Delay Min (ms)", backtrack, 100.0, 0.0, 2000.0, true));
+        settingsManager.rSetting(new Setting("Delay Max (ms)", backtrack, 500.0, 0.0, 2000.0, true));
+        settingsManager.rSetting(new Setting("Through Walls", backtrack, false));
+
+        java.util.ArrayList<String> blinkModes = new java.util.ArrayList<>();
+        blinkModes.add("Pulse"); blinkModes.add("Latency");
+        settingsManager.rSetting(new Setting("Mode", blink, "Pulse", blinkModes));
+        settingsManager.rSetting(new Setting("Delay Min (ms)", blink, 100.0, 0.0, 2000.0, true));
+        settingsManager.rSetting(new Setting("Delay Max (ms)", blink, 500.0, 0.0, 2000.0, true));
+
 settingsManager.rSetting(new Setting("Show Mobs", tracers, false));
 
     settingsManager.rSetting(new Setting("Players", nametags, true));
@@ -393,6 +400,7 @@ settingsManager.rSetting(new Setting("FPS", blockESP, 30.0, 1.0, 60.0, true));
 settingsManager.rSetting(new Setting("Tracers", blockESP, true));
 settingsManager.rSetting(new Setting("Fill", blockESP, true));
 settingsManager.rSetting(new Setting("Outline", blockESP, true));
+
 
         net.minecraft.client.KeyMapping.Category guiCategory = net.minecraft.client.KeyMapping.Category.register(
             net.minecraft.resources.Identifier.fromNamespaceAndPath("imnotcheatingyouare", "main")

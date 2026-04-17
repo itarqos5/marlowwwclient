@@ -4,8 +4,14 @@ import com.eclipseware.imnotcheatingyouare.client.ImnotcheatingyouareClient;
 import com.eclipseware.imnotcheatingyouare.client.module.Category;
 import com.eclipseware.imnotcheatingyouare.client.module.Module;
 import com.eclipseware.imnotcheatingyouare.client.setting.Setting;
+
+import com.eclipseware.imnotcheatingyouare.client.utils.cheat.AntiCheatProfile;
+import com.eclipseware.imnotcheatingyouare.client.utils.cheat.GCDFix;
+import com.eclipseware.imnotcheatingyouare.client.utils.cheat.RotationSpoof;
+
 import com.eclipseware.imnotcheatingyouare.client.utils.FriendManager;
 import com.eclipseware.imnotcheatingyouare.client.utils.SilentAim;
+
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,6 +48,10 @@ public class AimAssist extends Module {
             return;
         }
 
+        // Update GCD for current sensitivity every tick
+        GCDFix.update(mc.options.sensitivity().get());
+
+        // Jitter-click protection
         if (mc.options.keyAttack.isDown()) {
             clickGraceTicks = 5;
         } else if (clickGraceTicks > 0) {
@@ -65,6 +75,9 @@ public class AimAssist extends Module {
             return;
         }
 
+        AABB box = target.getBoundingBox();
+        Vec3 aimPoint = new Vec3(box.getCenter().x, box.getCenter().y, box.getCenter().z);
+        Vec3 eyes = mc.player.getEyePosition();
         if (target != lastTarget) {
             targetAcquiredTime = System.currentTimeMillis();
             lastTarget = target;
@@ -74,22 +87,18 @@ public class AimAssist extends Module {
         long reactionDelay = delaySetting != null ? (long) delaySetting.getValDouble() : 50;
         if (System.currentTimeMillis() - targetAcquiredTime < reactionDelay) return;
 
-        AABB box = target.getBoundingBox();
-        Vec3 aimPoint = new Vec3(box.getCenter().x, box.getCenter().y, box.getCenter().z);
-        Vec3 eyes = mc.player.getEyePosition();
-
         double diffX = aimPoint.x - eyes.x;
         double diffY = aimPoint.y - eyes.y;
         double diffZ = aimPoint.z - eyes.z;
-        double dist = Math.sqrt(diffX * diffX + diffZ * diffZ);
+        double dist  = Math.sqrt(diffX * diffX + diffZ * diffZ);
 
-        float neededYaw = (float) (Math.toDegrees(Math.atan2(diffZ, diffX)) - 90.0F);
+        float neededYaw   = (float) (Math.toDegrees(Math.atan2(diffZ, diffX)) - 90.0F);
         float neededPitch = (float) -Math.toDegrees(Math.atan2(diffY, dist));
 
-        float currentYaw = mc.player.getYRot();
+        float currentYaw   = mc.player.getYRot();
         float currentPitch = mc.player.getXRot();
 
-        float yawDiff = Mth.wrapDegrees(neededYaw - currentYaw);
+        float yawDiff   = Mth.wrapDegrees(neededYaw   - currentYaw);
         float pitchDiff = Mth.wrapDegrees(neededPitch - currentPitch);
 
         Setting modeSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Mode");
@@ -226,10 +235,10 @@ public class AimAssist extends Module {
 
     private void chooseTarget() {
         Setting rangeSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Range");
-        Setting fovSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "FOV");
+        Setting fovSetting   = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "FOV");
 
-        double range = rangeSetting != null ? rangeSetting.getValDouble() : 4.5;
-        double maxFov = fovSetting != null ? fovSetting.getValDouble() : 120.0;
+        double range   = rangeSetting != null ? rangeSetting.getValDouble() : 4.5;
+        double maxFov  = fovSetting   != null ? fovSetting.getValDouble()   : 120.0;
 
         Entity bestTarget = null;
         double bestAngle = maxFov / 2.0;
@@ -240,12 +249,12 @@ public class AimAssist extends Module {
             if (entity instanceof Player p && FriendManager.isFriend(p)) continue;
             if (!isValidTarget(entity)) continue;
 
-            AABB box = entity.getBoundingBox();
+            AABB box      = entity.getBoundingBox();
             Vec3 aimPoint = new Vec3(box.getCenter().x, box.getCenter().y, box.getCenter().z);
             double angle = getAngleToLookVec(aimPoint);
 
             if (angle <= bestAngle) {
-                bestAngle = angle;
+                bestAngle  = angle;
                 bestTarget = entity;
             }
         }
@@ -255,25 +264,19 @@ public class AimAssist extends Module {
     private double getAngleToLookVec(Vec3 targetVec) {
         Vec3 lookVec = mc.player.getViewVector(1.0F);
         Vec3 diffVec = targetVec.subtract(mc.player.getEyePosition()).normalize();
-        double dot = lookVec.dot(diffVec);
-        dot = Mth.clamp(dot, -1.0, 1.0);
+        double dot   = Mth.clamp(lookVec.dot(diffVec), -1.0, 1.0);
         return Math.toDegrees(Math.acos(dot));
     }
 
     private boolean isValidTarget(Entity entity) {
-        Setting playersSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Players");
-        Setting hostileSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Hostile Mobs");
-        Setting passiveSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Passive Mobs");
+        Setting playersSetting  = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Players");
+        Setting hostileSetting  = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Hostile Mobs");
+        Setting passiveSetting  = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Passive Mobs");
 
-        if (entity instanceof Player) {
-            return playersSetting != null && playersSetting.getValBoolean();
-        }
-        if (entity instanceof Enemy) {
-            return hostileSetting != null && hostileSetting.getValBoolean();
-        }
-        if (entity instanceof Animal || entity instanceof LivingEntity) {
-            return passiveSetting != null && passiveSetting.getValBoolean();
-        }
+        if (entity instanceof Player)       return playersSetting  != null && playersSetting.getValBoolean();
+        if (entity instanceof Enemy)        return hostileSetting  != null && hostileSetting.getValBoolean();
+        if (entity instanceof Animal || entity instanceof LivingEntity)
+                                            return passiveSetting  != null && passiveSetting.getValBoolean();
         return false;
     }
 }

@@ -1,13 +1,17 @@
 ## 🧠 Codebase Intelligence
-- The project leverages robust Mixins (e.g., `MultiPlayerGameModeMixin`) for granular packet monitoring and interaction injection.
-- Minecraft's `handleInventoryMouseClick` with container ID `0` allows absolute silent manipulation of items without rendering `InventoryScreen` on the client.
-- Client-side chunk iteration (`chunk.getBlockEntities().values()`) is the only performant method for wide-radius scanning compared to `mc.level.getBlockEntity(pos)`.
+- PR merge cause massive code duplicate + bracket syntax break.
+- Conflict in `ConnectionMixin`, `BlinkModule`, `Backtrack`, `AimAssist`, `Triggerbot` resolve.
+- Mojmap mapping mismatch (e.g. `SwordItem` not exist → string `contains("sword")` fix).
+- Outgoing packet dump in `BlinkModule` use `mc.getConnection().send(packet)`. Incoming in `Backtrack` use `typed.handle(mc.player.connection)`.
 
 ## 🚀 Future Roadmap
-- `HitSwap` logic currently reads simple heuristic mappings (Netherite > Diamond > Iron). It may benefit from calculating exact attributes (e.g. Sharpness) using `EnchantmentHelper`.
-- Implement interpolation for entity ESPs (Tracer lines can stutter if FPS is uncapped and entity ticks differ from render ticks).
+- CrystalAura embedded killaura very broken → flags Simulation/MultiActions/Timer.
+- Plan: Remove embedded killaura from CrystalAura. Require separate KillAura module use.
+- Backtrack/Hitbox packet order verify (queue structure sync with server ticks).
+- Fix "hit through block" logic in KillAura (add raycast check).
 
 ## 🤖 AI Context & Handoff
-- Modified `AutoTotem` to use direct container manipulation rather than triggering an active screen overlay, minimizing detectability.
-- Updated `CrystalAura` damage heuristics to approximate target armor and explicitly override Anti-Suicide protections when enemies are below the `Face Place Threshold`.
-- Created `HitSwap` module that injects before network packets send on standard UI attack to ensure peak damage. The agent should know Caveman logic is active for terse outputs.
+- Clean-first codebase policy enforce. Duplicate loops remove.
+- Build success with Fabric Loom 1.15.5 (`compileClientJava` pass).
+- Caveman mode active (ultra-compressed responses).
+- Mental model: Combat modules must NEVER bypass RotationManager/Queue syncing to avoid anticheat flags.
