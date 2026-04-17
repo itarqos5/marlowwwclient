@@ -9,4 +9,7 @@ public interface MinecraftAccessor {
     // "method_1536" maps to "startAttack" in Official Mojang Mappings
     @Invoker("startAttack")
     boolean invokeStartAttack();
+
+    @Invoker("doItemUse")
+    boolean invokeDoItemUse();
 }

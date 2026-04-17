@@ -92,8 +92,12 @@ moduleManager.modules.add(configurator);
 
         Module backtrack = new com.eclipseware.imnotcheatingyouare.client.module.impl.Backtrack();
         Module blink = new com.eclipseware.imnotcheatingyouare.client.module.impl.BlinkModule();
+        Module crystalMacro = new com.eclipseware.imnotcheatingyouare.client.module.impl.CrystalMacro();
+        Module anchorMacro = new com.eclipseware.imnotcheatingyouare.client.module.impl.AnchorMacro();
         moduleManager.modules.add(backtrack);
         moduleManager.modules.add(blink);
+        moduleManager.modules.add(crystalMacro);
+        moduleManager.modules.add(anchorMacro);
 
         Module theme = new Module("Theme", Category.Render, "Customizes the client's UI colors and animations.");
         moduleManager.modules.add(theme);
