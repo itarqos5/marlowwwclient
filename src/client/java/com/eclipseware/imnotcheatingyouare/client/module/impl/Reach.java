@@ -17,12 +17,11 @@ public class Reach extends Module {
 
     public Reach() {
         super("Reach", Category.Combat, "Slightly increases your interaction range.");
-        ClientTickEvents.END_CLIENT_TICK.register(client -> onTick());
     }
 
     @Override
     public void onTick() {
-        if (mc.player == null) return;
+        if (mc == null || mc.player == null) return;
 
         Setting reachSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Distance");
         double rawExtra = reachSetting != null ? reachSetting.getValDouble() : 0.3;
@@ -43,6 +42,12 @@ public class Reach extends Module {
                    .setBaseValue(BASE_BLOCK);
             Objects.requireNonNull(mc.player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE))
                    .setBaseValue(BASE_ENTITY);
+        if (mc.player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE) != null) {
+            Objects.requireNonNull(mc.player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE)).setBaseValue(4.5 + reachAdd);
+        }
+        
+        if (mc.player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE) != null) {
+            Objects.requireNonNull(mc.player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE)).setBaseValue(3.0 + reachAdd);
         }
     }
 
@@ -53,6 +58,13 @@ public class Reach extends Module {
                    .setBaseValue(BASE_BLOCK);
             Objects.requireNonNull(mc.player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE))
                    .setBaseValue(BASE_ENTITY);
+        if (mc != null && mc.player != null) {
+            if (mc.player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE) != null) {
+                Objects.requireNonNull(mc.player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE)).setBaseValue(4.5);
+            }
+            if (mc.player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE) != null) {
+                Objects.requireNonNull(mc.player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE)).setBaseValue(3.0);
+            }
         }
     }
 }

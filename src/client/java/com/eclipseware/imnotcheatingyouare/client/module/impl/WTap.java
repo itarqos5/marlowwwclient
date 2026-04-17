@@ -15,6 +15,8 @@ public class WTap extends Module {
 
     // Randomised per-cycle jitter so the release timing isn't perfectly constant
     private int jitterTicks = 0;
+    private int phase = 0;
+    private int ticksRemaining = 0;
 
     public WTap() {
         super("WTap", Category.Combat, "Releases forward key on hit to reset sprint knockback.");
@@ -54,6 +56,13 @@ public class WTap extends Module {
                     } else {
                         mc.options.keyUp.setDown(false);
                     }
+                if (!mc.options.keyUp.isDown()) {
+                    phase = 0;
+                    return;
+                }
+                ticksRemaining--;
+                if (ticksRemaining <= 0) {
+                    mc.options.keyUp.setDown(false);
                     phase = 2;
                     Setting actionSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Action Ticks");
                     int base = actionSetting != null ? (int) actionSetting.getValDouble() : 1;
@@ -66,6 +75,7 @@ public class WTap extends Module {
                     if (AntiCheatProfile.wtapSilentMode()) {
                         sendSprintPacket(true);
                     } else if (isPhysicallyHoldingW()) {
+                    if (isPhysicallyHoldingW()) {
                         mc.options.keyUp.setDown(true);
                     }
                     phase = 0;

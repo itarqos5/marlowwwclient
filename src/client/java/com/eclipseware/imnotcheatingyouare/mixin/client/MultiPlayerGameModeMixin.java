@@ -28,12 +28,14 @@ public class MultiPlayerGameModeMixin {
         Module triggerBotMod = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("Triggerbot");
         if (triggerBotMod != null && triggerBotMod.isToggled() && triggerBotMod instanceof com.eclipseware.imnotcheatingyouare.client.module.impl.Triggerbot tb) {
             if (tb.shouldBlock(target)) {
+        Module hitSelectMod = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("HitSelect");
+        if (hitSelectMod != null && hitSelectMod.isToggled() && hitSelectMod instanceof HitSelect hs) {
+            if (!hs.canAttack(target)) {
                 ci.cancel();
                 return;
             }
         }
 
-        // 2. AutoShieldBreaker
         Module shieldBreakerMod = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("AutoShieldBreaker");
         if (shieldBreakerMod != null && shieldBreakerMod.isToggled() && shieldBreakerMod instanceof AutoShieldBreaker asb) {
             if (asb.shouldCancelAttack(target)) {
@@ -74,9 +76,43 @@ public class MultiPlayerGameModeMixin {
             }
         }
     }
+if (!ci.isCancelled()) {
+Module kbMod = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("KBDisplacement");
+if (kbMod != null && kbMod.isToggled() && kbMod instanceof KnockbackDisplacement kbd) {
+float[] flip = kbd.getFlipRotation(target);
+if (flip != null && Minecraft.getInstance().getConnection() != null) {
+Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(
+flip[0], flip[1], player.onGround(), false
+));
+kbShouldRevert = true;
+}
+}
+}
+if (!ci.isCancelled()) {
+Module silentAim = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("SilentAim");
+if (silentAim != null && silentAim.isToggled() && com.eclipseware.imnotcheatingyouare.client.utils.SilentAimUtil.isActive()) {
+if (Minecraft.getInstance().getConnection() != null) {
+Minecraft.getInstance().getConnection().send(new ServerboundMovePlayerPacket.Rot(
+com.eclipseware.imnotcheatingyouare.client.utils.SilentAimUtil.getYaw(),
+com.eclipseware.imnotcheatingyouare.client.utils.SilentAimUtil.getPitch(),
+player.onGround(), false
+));
+}
+com.eclipseware.imnotcheatingyouare.client.utils.SilentAimUtil.consume();
+}
+}
+}
 
     @Inject(method = "attack", at = @At("RETURN"))
     private void afterAttack(Player player, Entity target, CallbackInfo ci) {
+        if (com.eclipseware.imnotcheatingyouare.client.module.impl.AttributeSwap.INSTANCE != null) {
+            com.eclipseware.imnotcheatingyouare.client.module.impl.AttributeSwap.INSTANCE.onAttack(target);
+        }
+
+        if (com.eclipseware.imnotcheatingyouare.client.module.impl.Backtrack.INSTANCE != null) {
+            com.eclipseware.imnotcheatingyouare.client.module.impl.Backtrack.INSTANCE.onAttack(target);
+        }
+
         if (kbShouldRevert) {
             var mc = Minecraft.getInstance();
             if (mc.getConnection() != null) {

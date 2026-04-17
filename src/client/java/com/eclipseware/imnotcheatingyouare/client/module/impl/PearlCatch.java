@@ -13,6 +13,7 @@ public class PearlCatch extends Module {
     private int ticksElapsed = 0;
     private int originalSlot = -1;
     private int windChargeSlot = -1;
+    private float targetYaw, targetPitch;
 
     public PearlCatch() {
         super("PearlCatch", Category.Movement);
@@ -26,17 +27,17 @@ public class PearlCatch extends Module {
         windChargeSlot = findItem("wind_charge");
 
         if (pearlSlot == -1 || windChargeSlot == -1) {
-            super.onKeybind(); // Toggle normally if we don't have the required items
+            super.onKeybind(); 
             return;
         }
 
         originalSlot = mc.player.getInventory().getSelectedSlot();
+        targetYaw = mc.player.getYRot();
+        targetPitch = mc.player.getXRot();
         
-        // Swap to Pearl
         mc.player.getInventory().setSelectedSlot(pearlSlot);
         mc.getConnection().send(new ServerboundSetCarriedItemPacket(pearlSlot));
 
-        // Throw Pearl
         mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
         mc.player.swing(InteractionHand.MAIN_HAND);
 
@@ -44,10 +45,8 @@ public class PearlCatch extends Module {
         int delay = delaySetting != null ? (int) delaySetting.getValDouble() : 5;
 
         if (delay <= 0) {
-            // If delay is 0, fire wind charge instantly in the same tick
             fireWindCharge();
         } else {
-            // Defer the wind charge to the tick loop
             active = true;
             ticksElapsed = 0;
         }
@@ -56,6 +55,8 @@ public class PearlCatch extends Module {
     @Override
     public void onTick() {
         if (!active || mc.player == null || mc.getConnection() == null) return;
+
+        com.eclipseware.imnotcheatingyouare.client.utils.RotationManager.keepRotated(targetYaw, targetPitch, 40.0f, false);
 
         ticksElapsed++;
         
@@ -68,24 +69,24 @@ public class PearlCatch extends Module {
     }
     
     private void fireWindCharge() {
-        // Swap to Wind Charge
+        com.eclipseware.imnotcheatingyouare.client.utils.RotationManager.keepRotated(targetYaw, targetPitch, 40.0f, false);
+
         mc.player.getInventory().setSelectedSlot(windChargeSlot);
         mc.getConnection().send(new ServerboundSetCarriedItemPacket(windChargeSlot));
 
-        // Throw Wind Charge
         mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
         mc.player.swing(InteractionHand.MAIN_HAND);
 
-        // Swap back to whatever weapon we were holding
         mc.player.getInventory().setSelectedSlot(originalSlot);
         mc.getConnection().send(new ServerboundSetCarriedItemPacket(originalSlot));
 
+        com.eclipseware.imnotcheatingyouare.client.utils.RotationManager.requestReturn();
         active = false;
     }
 
     @Override
     public void onDisable() {
-        active = false; // Failsafe
+        active = false; 
     }
 
     private int findItem(String targetName) {

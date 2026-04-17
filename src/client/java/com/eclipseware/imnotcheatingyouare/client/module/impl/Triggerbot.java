@@ -11,10 +11,12 @@ import com.eclipseware.imnotcheatingyouare.client.utils.cheat.GCDFix;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.Enemy;
+import com.eclipseware.imnotcheatingyouare.client.utils.FriendManager;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
@@ -25,6 +27,9 @@ public class Triggerbot extends Module {
 
     // Tracks last-attack ms for humanised inter-click timing
     private long lastAttackMs = 0L;
+
+    private int tickCounter = 0;
+    private int currentTargetDelay = 0;
 
     public Triggerbot() {
         super("Triggerbot", Category.Combat);
@@ -50,6 +55,26 @@ public class Triggerbot extends Module {
     private void runLegit() {
         if (mc.screen != null) { tickCounter = 0; return; }
         if (mc.hitResult == null || mc.hitResult.getType() != HitResult.Type.ENTITY) { tickCounter = 0; return; }
+
+        if (mc == null || mc.player == null || mc.level == null) return;
+
+        if (mc.screen instanceof AbstractContainerScreen<?>) {
+            tickCounter = 0;
+            return;
+        }
+
+        Setting requireClickSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Require Click");
+        if (requireClickSetting != null && requireClickSetting.getValBoolean()) {
+            if (!mc.options.keyAttack.isDown()) {
+                tickCounter = 0;
+                return;
+            }
+        }
+
+        if (mc.hitResult == null || mc.hitResult.getType() != HitResult.Type.ENTITY) {
+            tickCounter = 0;
+            return;
+        }
 
         Entity target = ((EntityHitResult) mc.hitResult).getEntity();
         if (!isValidTarget(target)) { tickCounter = 0; return; }
@@ -86,13 +111,18 @@ public class Triggerbot extends Module {
             int max = maxSetting != null ? (int) maxSetting.getValDouble() : 4;
             if (min > max) { int t = min; min = max; max = t; }
             currentTargetDelay = min + (int) (Math.random() * ((max - min) + 1));
-            tickCounter = 0;
+        Module hitSelectMod = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule("HitSelect");
+        if (hitSelectMod != null && hitSelectMod.isToggled() && hitSelectMod instanceof HitSelect hs) {
+            if (!hs.canAttack(target)) return;
         }
-    }
 
-    private void runBlatant() {
-        if (mc.screen != null) return;
-        if (mc.hitResult == null || mc.hitResult.getType() != HitResult.Type.ENTITY) return;
+        if (mc.player.getAttackStrengthScale(1.0f) < 1.0f) {
+            tickCounter = 0;
+            return;
+        }
+
+        tickCounter++;
+        if (tickCounter < currentTargetDelay) return;
 
         Entity target = ((EntityHitResult) mc.hitResult).getEntity();
         if (!isValidTarget(target)) return;
@@ -140,9 +170,33 @@ public class Triggerbot extends Module {
         return false;
     }
 
+        Setting clickStyleSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Click Style");
+        String clickStyle = clickStyleSetting != null ? clickStyleSetting.getValString() : "Virtual";
+
+        KeyMapping.click(mc.options.keyAttack.getDefaultKey());
+
+        Setting minSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Min Delay (Ticks)");
+        Setting maxSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Max Delay (Ticks)");
+        int min = minSetting != null ? (int) minSetting.getValDouble() : 1;
+        int max = maxSetting != null ? (int) maxSetting.getValDouble() : 4;
+        if (min > max) { int temp = min; min = max; max = temp; }
+        currentTargetDelay = min + (int) (Math.random() * ((max - min) + 1));
+        tickCounter = 0;
+    }
+
     private boolean isValidTarget(Entity entity) {
         if (!(entity instanceof LivingEntity)) return false;
         if (!entity.isAlive() || entity == mc.player) return false;
+        if (entity instanceof net.minecraft.world.entity.player.Player p && FriendManager.isFriend(p)) return false;
+
+        Setting weaponsOnlySetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Weapons Only");
+        if (weaponsOnlySetting != null && weaponsOnlySetting.getValBoolean()) {
+            net.minecraft.world.item.Item mainHand = mc.player.getMainHandItem().getItem();
+            String name = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(mainHand).getPath();
+            if (!name.contains("sword") && !name.contains("axe")) {
+                return false;
+            }
+        }
 
         Setting playersSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Players");
         Setting hostileSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Hostile Mobs");
@@ -154,6 +208,13 @@ public class Triggerbot extends Module {
             return hostileSetting != null && hostileSetting.getValBoolean();
         if (entity instanceof Animal || entity instanceof LivingEntity)
             return passiveSetting != null && passiveSetting.getValBoolean();
+        }
+        if (entity instanceof Enemy) {
+            return hostileSetting != null && hostileSetting.getValBoolean();
+        }
+        if (entity instanceof Animal || entity instanceof LivingEntity) {
+            return passiveSetting != null && passiveSetting.getValBoolean();
+        }
         return false;
     }
 }

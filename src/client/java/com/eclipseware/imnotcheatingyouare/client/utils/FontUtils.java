@@ -8,12 +8,10 @@ import net.minecraft.network.chat.FontDescription;
 import net.minecraft.resources.Identifier;
 
 public class FontUtils {
-    // Hooks directly into your high-res oversampled verdana.json provider
     public static final Identifier VERDANA = Identifier.parse("imnotcheatingyouare:verdana");
 
     public static Component get(String text) {
-        // In 1.21+, the Identifier must be wrapped in a FontDescription.Resource
-        return Component.literal(text).withStyle(Style.EMPTY.withFont(new FontDescription.Resource(VERDANA)));
+        return Component.literal(text);
     }
 
     public static void drawString(GuiGraphics graphics, String text, int x, int y, int color, boolean dropShadow) {

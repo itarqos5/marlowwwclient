@@ -135,7 +135,7 @@ public class ConfigManager {
         try {
             String encrypted = new String(Files.readAllBytes(CONFIG_FILE.toPath()));
             String rawJson = CryptoUtils.decrypt(encrypted);
-            if (rawJson == null) return; // If decryption fails, abort
+            if (rawJson == null) return; 
 
             JsonObject json = JsonParser.parseString(rawJson).getAsJsonObject();
             if (json.has("Modules")) {
@@ -146,8 +146,13 @@ public class ConfigManager {
                     Module m = ImnotcheatingyouareClient.INSTANCE.moduleManager.getModule(name);
                     
                     if (m != null) {
-                        if (moduleJson.has("Toggled") && moduleJson.get("Toggled").getAsBoolean() && !m.isToggled()) {
-                            m.toggle();
+                        if (moduleJson.has("Toggled")) {
+                            boolean shouldBeToggled = moduleJson.get("Toggled").getAsBoolean();
+                            if (shouldBeToggled && !m.isToggled()) {
+                                m.toggle();
+                            } else if (!shouldBeToggled && m.isToggled()) {
+                                m.toggle();
+                            }
                         }
                         if (moduleJson.has("Keybind")) {
                             m.setKeyBind(moduleJson.get("Keybind").getAsInt());
