@@ -1,17 +1,14 @@
 ## 🧠 Codebase Intelligence
-- PR merge cause massive code duplicate + bracket syntax break.
-- Conflict in `ConnectionMixin`, `BlinkModule`, `Backtrack`, `AimAssist`, `Triggerbot` resolve.
-- Mojmap mapping mismatch (e.g. `SwordItem` not exist → string `contains("sword")` fix).
-- Outgoing packet dump in `BlinkModule` use `mc.getConnection().send(packet)`. Incoming in `Backtrack` use `typed.handle(mc.player.connection)`.
+- Mappings conflict resolved. Use `owo_version=0.13.0+1.21.11` to avoid `Expected: intermediary` from official releases containing `official` namespace inside accesswideners.
+- Owo-lib factory methods moved from `Components`/`Containers` to `UIComponents`/`UIContainers` in `0.13.0`.
+- Minecraft's `ResourceLocation` maps to `net.minecraft.resources.Identifier` under Fabric's official-mapped + loom magic in this env.
 
 ## 🚀 Future Roadmap
-- CrystalAura embedded killaura very broken → flags Simulation/MultiActions/Timer.
-- Plan: Remove embedded killaura from CrystalAura. Require separate KillAura module use.
-- Backtrack/Hitbox packet order verify (queue structure sync with server ticks).
-- Fix "hit through block" logic in KillAura (add raycast check).
+- Test new declarative XML `Clickgui` in-game and tweak margins/surfaces/colors based on visual results.
+- Finish cleaning up `AnimationUtil.java` usages. Keep HUD logic intact per user request, but optimize and isolate it.
+- Remove embedded `KillAura` logic from `CrystalAura` code to fix flags.
 
 ## 🤖 AI Context & Handoff
-- Clean-first codebase policy enforce. Duplicate loops remove.
-- Build success with Fabric Loom 1.15.5 (`compileClientJava` pass).
-- Caveman mode active (ultra-compressed responses).
-- Mental model: Combat modules must NEVER bypass RotationManager/Queue syncing to avoid anticheat flags.
+- Successfully converted `Clickgui.java` into an `owo-ui` powered UI. It compiles!
+- We are currently waiting for user to compile/run client to confirm new UI layout matches their `goated` design expectations.
+- Caveman mode is active.

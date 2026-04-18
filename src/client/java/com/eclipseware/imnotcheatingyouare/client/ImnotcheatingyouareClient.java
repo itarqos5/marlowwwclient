@@ -36,7 +36,6 @@ public void onInitializeClient() {
         INSTANCE = this;
         moduleManager = new ModuleManager();
         settingsManager = new SettingsManager();
-        clickGui = new Clickgui();
 
 Module autoSprint = new Module("AutoSprint", Category.Movement);
 Module noJumpDelay = new Module("NoJumpDelay", Category.Movement);
@@ -419,6 +418,9 @@ settingsManager.rSetting(new Setting("Outline", blockESP, true));
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             while (guiBind.consumeClick()) {
+                if (clickGui == null) {
+                    clickGui = new Clickgui();
+                }
                 if (!(client.screen instanceof Clickgui)) {
                     client.setScreen(clickGui);
                 }
