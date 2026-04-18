@@ -9,6 +9,6 @@ public interface MinecraftAccessor {
     @Invoker("startAttack")
     boolean invokeStartAttack();
 
-    @Invoker("doItemUse")
-    boolean invokeDoItemUse();
+    @Invoker("startUseItem")
+    void invokeStartUseItem();
 }
