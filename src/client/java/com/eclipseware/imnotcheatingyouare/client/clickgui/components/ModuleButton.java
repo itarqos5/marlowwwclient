@@ -53,12 +53,10 @@ public class ModuleButton extends Button {
         drawString(this.getName(), this.x + 4, this.y + 4, this.getState() ? -1 : 0xFFAAAAAA);
 
         if (!this.items.isEmpty()) {
-            // Draw a subtle '+' or '-' indicator for expandability
             drawString(this.subOpen ? "-" : "+", this.x + this.width - 12, this.y + 4, 0xFFAAAAAA);
 
             if (this.subOpen) {
                 float height = 14.0f;
-                // Draw a vertical linking line
                 context.fill((int)this.x + 3, (int)(this.y + 14), (int)this.x + 4, (int)(this.y + this.getHeight()), accent);
 
                 for (Item item : this.items) {
@@ -139,6 +137,15 @@ public class ModuleButton extends Button {
 
     public Module getModule() {
         return this.module;
+    }
+
+    public java.util.List<Item> getItems() {
+        return this.items;
+    }
+
+    @Override
+    public boolean isHovering(int mouseX, int mouseY) {
+        return mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y && mouseY <= this.y + 14.0f;
     }
 
     @Override

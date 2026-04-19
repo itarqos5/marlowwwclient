@@ -83,7 +83,12 @@ public class Module {
 
         if (windowHandle == 0) return;
 
-        boolean isPressed = org.lwjgl.glfw.GLFW.glfwGetKey(windowHandle, this.keyBind) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
+        boolean isPressed;
+        if (this.keyBind >= 0 && this.keyBind <= 7) {
+            isPressed = org.lwjgl.glfw.GLFW.glfwGetMouseButton(windowHandle, this.keyBind) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
+        } else {
+            isPressed = org.lwjgl.glfw.GLFW.glfwGetKey(windowHandle, this.keyBind) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
+        }
 
         if (isPressed && !wasKeyPressed) {
             onKeybind();

@@ -48,11 +48,8 @@ public class Widget {
         int color = RenderUtils.getThemeAccentColor().getRGB();
         int darkBg = 0xEE121212;
         
-        // Header Background
         context.fill(this.x, this.y, this.x + this.width, this.y + this.height, darkBg);
-        // Header Text (Theme Color)
         context.drawString(mc.font, this.name, this.x + 4, this.y + 5, color, false);
-        // Separator Line
         context.fill(this.x, this.y + this.height - 1, this.x + this.width, this.y + this.height, color);
 
         if (this.open) {
@@ -68,7 +65,6 @@ public class Widget {
                 currentY += (float) item.getHeight() + 1f;
             }
             
-            // Bottom line
             context.fill(this.x, (int)currentY, this.x + this.width, (int)currentY + 2, color);
         }
     }

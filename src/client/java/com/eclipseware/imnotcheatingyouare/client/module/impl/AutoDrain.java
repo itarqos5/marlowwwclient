@@ -31,20 +31,7 @@ public class AutoDrain extends Module {
     public void onTick() {
         if (mc.player == null || mc.level == null) return;
 
-        if (isSwappingBack) {
-            Setting swapBackSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Swap Back");
-            if (swapBackSetting != null && swapBackSetting.getValBoolean()) {
-                if (System.currentTimeMillis() >= swapBackTime) {
-                    ModuleUtils.switchToSlot(originalSlot);
-                    isSwappingBack = false;
-                    originalSlot = -1;
-                }
-            } else {
-                isSwappingBack = false;
-            }
-            return;
-        }
-
+        // Spoofing eliminates the need to await swapping back, ensuring true silent aim natively.
         Setting delaySetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Delay (ms)");
         long delay = delaySetting != null ? (long) delaySetting.getValDouble() : 150;
         if (System.currentTimeMillis() - lastActionTime < delay) return;
@@ -78,7 +65,7 @@ public class AutoDrain extends Module {
         float pitchDiff = Math.abs(rots[1] - RotationManager.getServerPitch());
         if (yawDiff > 5f || pitchDiff > 5f) return;
 
-        ModuleUtils.switchToSlot(useSlotCached);
+        ModuleUtils.spoofSlot(useSlotCached);
         if (useWebCached) {
             Direction dir = Direction.getNearest(
                 (int)(eyes.x - currentTarget.getX()),
@@ -86,20 +73,15 @@ public class AutoDrain extends Module {
                 (int)(eyes.z - currentTarget.getZ()),
                 Direction.UP
             );
-            ModuleUtils.placeBlockPacket(currentTarget, dir.getOpposite());
+            ModuleUtils.spoofPlaceBlockPacket(currentTarget, dir.getOpposite());
         } else {
             ModuleUtils.useItemPacket();
         }
 
-        mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+        ModuleUtils.spoofRestore();
         lastActionTime = System.currentTimeMillis();
         currentTarget = null;
-
-        Setting swapSetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Swap Back");
-        if (swapSetting != null && swapSetting.getValBoolean()) {
-            isSwappingBack = true;
-            swapBackTime = System.currentTimeMillis() + 100;
-        }
+        isSwappingBack = false;
     }
 
     private BlockPos findWaterTarget() {

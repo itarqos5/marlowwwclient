@@ -12,7 +12,6 @@ public class Button extends Item {
 
     @Override
     public void drawScreen(GuiGraphics context, int mouseX, int mouseY, float partialTicks) {
-        // Base button draw
     }
 
     @Override

@@ -82,7 +82,27 @@ public class Clickgui extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
+        boolean wasBinding = false;
+        for (Widget widget : this.widgets) {
+            for (com.eclipseware.imnotcheatingyouare.client.clickgui.components.Item item : widget.getItems()) {
+                if (item instanceof ModuleButton) {
+                    for (com.eclipseware.imnotcheatingyouare.client.clickgui.components.Item subItem : ((ModuleButton)item).getItems()) {
+                        if (subItem instanceof com.eclipseware.imnotcheatingyouare.client.clickgui.components.BindButton) {
+                            if (((com.eclipseware.imnotcheatingyouare.client.clickgui.components.BindButton)subItem).isListening) {
+                                wasBinding = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         this.widgets.forEach(component -> component.onKeyPressed(input.input()));
+        
+        if (wasBinding && input.input() == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
+            return true;
+        }
+        
         return super.keyPressed(input);
     }
 

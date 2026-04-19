@@ -29,7 +29,7 @@ public class Slider extends Button {
         int hoverDark = 0x44222222;
         int fill = this.isHovering(mouseX, mouseY) ? hoverDark : dark;
 
-        context.fill((int)this.x, (int)this.y, (int)(this.x + this.width + 7.4f), (int)(this.y + this.height), fill);
+        context.fill((int)this.x, (int)this.y, (int)(this.x + this.width), (int)(this.y + this.height), fill);
         
         float length = this.x + ((float) this.width + 7.4f) * this.partialMultiplier();
         if (length > this.x) {
@@ -87,6 +87,7 @@ public class Slider extends Button {
     }
 
     private float partialMultiplier() {
-        return (float) ((this.setting.getValDouble() - this.setting.getMin()) / (this.setting.getMax() - this.setting.getMin()));
+        float mult = (float) ((this.setting.getValDouble() - this.setting.getMin()) / (this.setting.getMax() - this.setting.getMin()));
+        return Math.max(0.0f, Math.min(1.0f, mult));
     }
 }

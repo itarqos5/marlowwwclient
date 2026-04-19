@@ -18,14 +18,13 @@ public class BooleanButton extends Button {
     public void drawScreen(GuiGraphics context, int mouseX, int mouseY, float partialTicks) {
         java.awt.Color theme = RenderUtils.getThemeAccentColor();
         int accent = new java.awt.Color(theme.getRed(), theme.getGreen(), theme.getBlue(), 120).getRGB();
-        // Transparent settings background
         int dark = 0x22000000;
         int hoverDark = 0x44222222;
 
         boolean active = getState();
         int fill = active ? accent : (this.isHovering(mouseX, mouseY) ? hoverDark : dark);
 
-        context.fill((int)this.x, (int)this.y, (int)(this.x + this.width + 7.4f), (int)(this.y + this.height), fill);
+        context.fill((int)this.x, (int)this.y, (int)(this.x + this.width), (int)(this.y + this.height), fill);
         drawString(this.getName(), this.x + 2.3f, this.y - 1.7f + 6, active ? -1 : 0xFFAAAAAA);
     }
 

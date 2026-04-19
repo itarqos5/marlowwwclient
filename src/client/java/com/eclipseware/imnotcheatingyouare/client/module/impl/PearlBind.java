@@ -12,6 +12,9 @@ public class PearlBind extends Module {
         setSubCategory("Crystal PvP");
     }
 
+    private int originalSlot = -1;
+    private int phase = 0;
+    
     @Override
     public void onEnable() {
         if (mc.player == null || mc.level == null) {
@@ -28,16 +31,28 @@ public class PearlBind extends Module {
         }
 
         if (pearlSlot != -1) {
-            int oldSlot = mc.player.getInventory().getSelectedSlot();
+            originalSlot = com.eclipseware.imnotcheatingyouare.client.utils.ModuleUtils.getSelectedSlot();
             com.eclipseware.imnotcheatingyouare.client.utils.ModuleUtils.switchToSlot(pearlSlot);
-            
-            mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
-            
-            com.eclipseware.imnotcheatingyouare.client.utils.ModuleUtils.switchToSlot(oldSlot);
-            
-            mc.player.swing(InteractionHand.MAIN_HAND);
+            phase = 1; // Wait 1 tick for packet to send
+        } else {
+            setToggled(false);
         }
+    }
 
-        setToggled(false);
+    @Override
+    public void onTick() {
+        if (mc.player == null) return;
+        
+        if (phase == 1) {
+            // Tick 1: Pearl is selected, send use packet natively
+            mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
+            mc.player.swing(InteractionHand.MAIN_HAND);
+            phase = 2; // Wait another tick
+        } else if (phase == 2) {
+            // Tick 2: Swap back
+            com.eclipseware.imnotcheatingyouare.client.utils.ModuleUtils.switchToSlot(originalSlot);
+            setToggled(false);
+            phase = 0;
+        }
     }
 }

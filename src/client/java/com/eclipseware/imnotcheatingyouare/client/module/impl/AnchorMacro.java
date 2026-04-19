@@ -21,6 +21,7 @@ public class AnchorMacro extends Module {
     private Setting safeAnchor;
     private Setting autoDisable;
     private Setting silentAim;
+    private Setting autoDetonate;
     
     private int step = 0; 
     private int ticksAssigned = 0;
@@ -34,11 +35,13 @@ public class AnchorMacro extends Module {
         safeAnchor = new Setting("Safe Anchor", this, true);
         autoDisable = new Setting("Auto Disable", this, true);
         silentAim = new Setting("Silent Aim", this, true);
+        autoDetonate = new Setting("Auto Detonate", this, true);
 
         ImnotcheatingyouareClient.INSTANCE.settingsManager.rSetting(delaySetting);
         ImnotcheatingyouareClient.INSTANCE.settingsManager.rSetting(safeAnchor);
         ImnotcheatingyouareClient.INSTANCE.settingsManager.rSetting(autoDisable);
         ImnotcheatingyouareClient.INSTANCE.settingsManager.rSetting(silentAim);
+        ImnotcheatingyouareClient.INSTANCE.settingsManager.rSetting(autoDetonate);
     }
 
     @Override
@@ -75,16 +78,19 @@ public class AnchorMacro extends Module {
         }
 
         BlockState currentPosState = mc.level.getBlockState(targetAnchorPos);
+        int oldSlot = ModuleUtils.getSelectedSlot();
 
         if (step == 0) {
             if (currentPosState.is(Blocks.RESPAWN_ANCHOR)) {
                 step = 1;
             } else {
                 if (silentAim.getValBoolean()) aimAt(targetAnchorPos);
-                int oldSlot = mc.player.getInventory().getSelectedSlot();
                 ModuleUtils.switchToSlot(anchorSlot);
-                ModuleUtils.placeBlockPacket(targetAnchorPos.below(), Direction.UP);
-                ModuleUtils.switchToSlot(oldSlot);
+                
+                Direction approachFace = Direction.UP;
+                if (mc.hitResult instanceof BlockHitResult bhr) approachFace = bhr.getDirection();
+                
+                ModuleUtils.placeBlockPacket(targetAnchorPos.relative(approachFace.getOpposite()), approachFace);
                 step = 1;
                 ticksAssigned = (int) delaySetting.getValDouble();
             }
@@ -98,19 +104,30 @@ public class AnchorMacro extends Module {
             }
 
             if (silentAim.getValBoolean()) aimAt(targetAnchorPos);
-            int oldSlot = mc.player.getInventory().getSelectedSlot();
             ModuleUtils.switchToSlot(glowstoneSlot);
             ModuleUtils.placeBlockPacket(targetAnchorPos, Direction.UP);
-            ModuleUtils.switchToSlot(oldSlot);
             step = 2;
             ticksAssigned = (int) delaySetting.getValDouble();
         } else if (step == 2) {
-            if (silentAim.getValBoolean()) aimAt(targetAnchorPos);
-            int oldSlot = mc.player.getInventory().getSelectedSlot();
-            mc.getConnection().send(new net.minecraft.network.protocol.game.ServerboundUseItemOnPacket(
-                InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(targetAnchorPos), Direction.UP, targetAnchorPos, false), 0
-            ));
-            mc.player.swing(InteractionHand.MAIN_HAND);
+            int fallbackSlot = oldSlot;
+            if (mc.player.getInventory().getItem(fallbackSlot).is(Items.GLOWSTONE) || mc.player.getInventory().getItem(fallbackSlot).is(Items.RESPAWN_ANCHOR)) {
+                for (int i = 0; i < 9; i++) {
+                    if (!mc.player.getInventory().getItem(i).is(Items.GLOWSTONE) && !mc.player.getInventory().getItem(i).is(Items.RESPAWN_ANCHOR)) {
+                        fallbackSlot = i;
+                        break;
+                    }
+                }
+            }
+            ModuleUtils.switchToSlot(fallbackSlot);
+            
+            if (autoDetonate.getValBoolean()) {
+                if (silentAim.getValBoolean()) aimAt(targetAnchorPos);
+                mc.getConnection().send(new net.minecraft.network.protocol.game.ServerboundUseItemOnPacket(
+                    InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(targetAnchorPos), Direction.UP, targetAnchorPos, false), 0
+                ));
+                mc.player.swing(InteractionHand.MAIN_HAND);
+            }
+            
             step = 0;
             targetAnchorPos = null;
             if (autoDisable.getValBoolean()) setToggled(false);

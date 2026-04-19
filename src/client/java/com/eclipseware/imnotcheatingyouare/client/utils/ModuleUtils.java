@@ -24,14 +24,35 @@ public class ModuleUtils {
         return -1;
     }
 
-    private static int lastSentSlot = -1;
+    private static java.lang.reflect.Field selectedField = null;
+
+    private static void setupReflection() {
+        if (selectedField != null) return;
+        try {
+            selectedField = net.minecraft.world.entity.player.Inventory.class.getDeclaredField("selected");
+            selectedField.setAccessible(true);
+        } catch (Exception ignored) {}
+    }
+
+    public static int getSelectedSlot() {
+        if (mc.player == null) return 0;
+        setupReflection();
+        if (selectedField != null) {
+            try { return selectedField.getInt(mc.player.getInventory()); } catch (Exception ignored) {}
+        }
+        return 0; // Fallback
+    }
 
     public static void switchToSlot(int slot) {
         if (mc.player == null) return;
-        mc.player.getInventory().setSelectedSlot(slot);
-        setServerSlot(slot);
+        setupReflection();
+        if (selectedField != null) {
+            try { selectedField.setInt(mc.player.getInventory(), slot); } catch (Exception ignored) {}
+        }
     }
     
+    private static int lastSentSlot = -1;
+
     public static void setServerSlot(int slot) {
         if (mc.player == null || mc.getConnection() == null) return;
         if (lastSentSlot == slot) return; 
@@ -65,15 +86,37 @@ public class ModuleUtils {
     }
 
     public static void useItemPacket() {
-useItemPacket(mc.player.getYRot(), mc.player.getXRot());
-}
+        useItemPacket(mc.player.getYRot(), mc.player.getXRot());
+    }
 
-public static void useItemPacket(float yaw, float pitch) {
-if (mc.player == null || mc.getConnection() == null) return;
-ServerboundUseItemPacket packet = new ServerboundUseItemPacket(
-InteractionHand.MAIN_HAND, 0, yaw, pitch
-);
-mc.getConnection().send(packet);
-mc.player.swing(InteractionHand.MAIN_HAND);
-}
+    public static void useItemPacket(float yaw, float pitch) {
+        if (mc.player == null || mc.getConnection() == null) return;
+        ServerboundUseItemPacket packet = new ServerboundUseItemPacket(
+            InteractionHand.MAIN_HAND, 0, yaw, pitch
+        );
+        mc.getConnection().send(packet);
+        mc.player.swing(InteractionHand.MAIN_HAND);
+    }
+
+    public static void spoofSlot(int fakeSlot) {
+        if (mc.getConnection() == null || mc.player == null) return;
+        mc.getConnection().send(new ServerboundSetCarriedItemPacket(fakeSlot));
+    }
+
+    public static void spoofRestore() {
+        if (mc.getConnection() == null || mc.player == null) return;
+        int cur = getSelectedSlot();
+        mc.getConnection().send(new ServerboundSetCarriedItemPacket(cur));
+    }
+
+    public static void spoofPlaceBlockPacket(BlockPos pos, Direction face) {
+        if (mc.player == null || mc.getConnection() == null) return;
+        BlockHitResult hitResult = new BlockHitResult(
+            Vec3.atCenterOf(pos), face, pos, false
+        );
+        mc.getConnection().send(new ServerboundUseItemOnPacket(
+            InteractionHand.MAIN_HAND, hitResult, 0
+        ));
+        mc.player.swing(InteractionHand.MAIN_HAND);
+    }
 }

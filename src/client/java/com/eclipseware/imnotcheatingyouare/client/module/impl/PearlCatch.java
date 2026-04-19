@@ -31,25 +31,13 @@ public class PearlCatch extends Module {
             return;
         }
 
-        originalSlot = mc.player.getInventory().getSelectedSlot();
+        originalSlot = com.eclipseware.imnotcheatingyouare.client.utils.ModuleUtils.getSelectedSlot();
         targetYaw = mc.player.getYRot();
         targetPitch = mc.player.getXRot();
         
-        mc.player.getInventory().setSelectedSlot(pearlSlot);
-        mc.getConnection().send(new ServerboundSetCarriedItemPacket(pearlSlot));
-
-        mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
-        mc.player.swing(InteractionHand.MAIN_HAND);
-
-        Setting delaySetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Delay (Ticks)");
-        int delay = delaySetting != null ? (int) delaySetting.getValDouble() : 5;
-
-        if (delay <= 0) {
-            fireWindCharge();
-        } else {
-            active = true;
-            ticksElapsed = 0;
-        }
+        com.eclipseware.imnotcheatingyouare.client.utils.ModuleUtils.switchToSlot(pearlSlot);
+        active = true;
+        ticksElapsed = 0; // Tick 0: We just selected pearl natively
     }
 
     @Override
@@ -65,28 +53,30 @@ public class PearlCatch extends Module {
 
         ticksElapsed++;
         
+        // Tick 1: Throw pearl
+        if (ticksElapsed == 1) {
+            mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
+            mc.player.swing(InteractionHand.MAIN_HAND);
+        }
+
         Setting delaySetting = ImnotcheatingyouareClient.INSTANCE.settingsManager.getSettingByName(this, "Delay (Ticks)");
         int delay = delaySetting != null ? (int) delaySetting.getValDouble() : 5;
 
-        if (ticksElapsed >= delay) {
-            fireWindCharge();
+        // Tick Delay+1: Switch to Wind Charge
+        if (ticksElapsed == delay + 1) {
+            com.eclipseware.imnotcheatingyouare.client.utils.ModuleUtils.switchToSlot(windChargeSlot);
         }
-    }
-    
-    private void fireWindCharge() {
-        com.eclipseware.imnotcheatingyouare.client.utils.RotationManager.keepRotated(targetYaw, targetPitch, 40.0f, false);
+        
+        // Tick Delay+2: Fire wind charge and restore
+        if (ticksElapsed >= delay + 2) {
+            mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
+            mc.player.swing(InteractionHand.MAIN_HAND);
 
-        mc.player.getInventory().setSelectedSlot(windChargeSlot);
-        mc.getConnection().send(new ServerboundSetCarriedItemPacket(windChargeSlot));
-
-        mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
-        mc.player.swing(InteractionHand.MAIN_HAND);
-
-        mc.player.getInventory().setSelectedSlot(originalSlot);
-        mc.getConnection().send(new ServerboundSetCarriedItemPacket(originalSlot));
-
-        com.eclipseware.imnotcheatingyouare.client.utils.RotationManager.requestReturn();
-        active = false;
+            com.eclipseware.imnotcheatingyouare.client.utils.ModuleUtils.switchToSlot(originalSlot);
+            
+            com.eclipseware.imnotcheatingyouare.client.utils.RotationManager.requestReturn();
+            active = false;
+        }
     }
 
     @Override

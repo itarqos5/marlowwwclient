@@ -7,5 +7,6 @@ public enum Category {
     Misc,
     World,
     Blatant,
-    Configs 
+    Configs,
+    Client
 }

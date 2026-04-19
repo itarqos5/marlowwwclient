@@ -63,7 +63,7 @@ public class KillAura extends Module {
             }
         }
 
-        double attackRange = 3.0;
+        double attackRange = range;
         if (mc.player.distanceTo(target) > attackRange) return;
 
         Vec3 eyePos = mc.player.getEyePosition();

@@ -90,13 +90,7 @@ public class CrystalAura extends Module {
         double r = range.getValDouble();
         Player target = getOptimalTarget(r);
         
-        boolean canCrystal = true;
-        if (target != null) {
-            canCrystal = (!target.onGround() || target.hurtTime > 0);
-        }
-
-        if (!canCrystal) return;
-
+        // Target is permitted regardless of grounding
         if (breakTicks == 0) {
             List<EndCrystal> crystals = mc.level.getEntitiesOfClass(EndCrystal.class, mc.player.getBoundingBox().inflate(r));
             for (EndCrystal crystal : crystals) {
@@ -210,7 +204,7 @@ public class CrystalAura extends Module {
                     
                     if (state.is(Blocks.OBSIDIAN) || state.is(Blocks.BEDROCK) || recentObby.containsKey(pos)) {
                         if (mc.level.isEmptyBlock(pos.above()) && mc.level.isEmptyBlock(pos.above(2))) {
-                            if (!RotationManager.hasLineOfSight(mc.player.getEyePosition(), Vec3.atCenterOf(pos))) continue;
+                            if (!RotationManager.hasLineOfSight(mc.player.getEyePosition(), new Vec3(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5))) continue;
                             if (isLethalToSelf(pos.above())) continue;
                             
                             double damage = calculateDamage(pos.above());
@@ -248,8 +242,9 @@ public class CrystalAura extends Module {
                     if ((mc.level.getBlockState(pos.below()).isSolid() || recentObby.containsKey(pos.below())) && mc.level.getBlockState(pos).canBeReplaced() && 
                         mc.level.isEmptyBlock(pos.above()) && mc.level.isEmptyBlock(pos.above(2))) {
                         
-                        if (!RotationManager.hasLineOfSight(mc.player.getEyePosition(), Vec3.atCenterOf(pos.below()))) continue;
+                        if (!RotationManager.hasLineOfSight(mc.player.getEyePosition(), new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5))) continue;
                         if (isLethalToSelf(pos.above())) continue;
+
                         
                         double damage = calcDmgToPlayer(pos.above(), target);
                         if (damage > bestScore) {

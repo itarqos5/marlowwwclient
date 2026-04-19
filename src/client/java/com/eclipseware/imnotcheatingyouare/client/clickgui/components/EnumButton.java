@@ -22,7 +22,7 @@ public class EnumButton extends Button {
         int hoverDark = 0x44222222;
         int fill = this.isHovering(mouseX, mouseY) ? hoverDark : dark;
 
-        context.fill((int)this.x, (int)this.y, (int)(this.x + this.width + 7.4f), (int)(this.y + this.height), fill);
+        context.fill((int)this.x, (int)this.y, (int)(this.x + this.width), (int)(this.y + this.height), fill);
         drawString(this.setting.getName() + " " + ChatFormatting.GRAY + this.setting.getValString(), this.x + 2.3f, this.y - 1.7f + 6, -1);
     }
 

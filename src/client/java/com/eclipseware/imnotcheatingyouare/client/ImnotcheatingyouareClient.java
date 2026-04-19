@@ -88,7 +88,7 @@ Module crystalAura = new com.eclipseware.imnotcheatingyouare.client.module.impl.
 Module antibot = new com.eclipseware.imnotcheatingyouare.client.module.impl.AntiBot();
 Module teams = new com.eclipseware.imnotcheatingyouare.client.module.impl.Teams();
 Module blink = new com.eclipseware.imnotcheatingyouare.client.module.impl.BlinkModule();
-Module crystalMacro = new com.eclipseware.imnotcheatingyouare.client.module.impl.CrystalMacro();
+
 
 moduleManager.modules.add(autoSprint);
 moduleManager.modules.add(noJumpDelay);
@@ -158,7 +158,7 @@ moduleManager.modules.add(friendProtector);
 moduleManager.modules.add(new com.eclipseware.imnotcheatingyouare.client.module.impl.AntiTranslationKey());
 
 moduleManager.modules.add(blink);
-moduleManager.modules.add(crystalMacro);
+
 
 Module theme = new Module("Theme", Category.Render, "Customizes the client's UI colors and animations.");
         moduleManager.modules.add(theme);
@@ -401,31 +401,17 @@ settingsManager.rSetting(new Setting("Fill", blockESP, true));
 settingsManager.rSetting(new Setting("Outline", blockESP, true));
 
 
-        net.minecraft.client.KeyMapping.Category guiCategory = net.minecraft.client.KeyMapping.Category.register(
-            net.minecraft.resources.Identifier.fromNamespaceAndPath("imnotcheatingyouare", "main")
-        );
+        Module menu = new com.eclipseware.imnotcheatingyouare.client.module.impl.Menu();
+        moduleManager.modules.add(menu);
 
-        guiBind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.imnotcheatingyouare.clickgui",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT,
-                guiCategory
-        ));
+        addColorSettings(settingsManager, menu, "Primary", 155, 60, 255);
+        addColorSettings(settingsManager, menu, "Secondary", 20, 20, 20);
 
         net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback.EVENT.register((guiGraphics, tickDelta) -> {
             com.eclipseware.imnotcheatingyouare.client.ui.ArrayListHud.INSTANCE.render(guiGraphics, tickDelta.getGameTimeDeltaTicks());
         });
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
-            while (guiBind.consumeClick()) {
-                if (clickGui == null) {
-                    clickGui = new Clickgui();
-                }
-                if (!(client.screen instanceof Clickgui)) {
-                    client.setScreen(clickGui);
-                }
-            }
-
             for (Module m : moduleManager.modules) {
                 m.tickKeybind();
                 if (m.isToggled()) {

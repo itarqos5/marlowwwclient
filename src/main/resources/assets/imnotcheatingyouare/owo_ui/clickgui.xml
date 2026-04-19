@@ -1,6 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo/1.21/owo-ui.xsd">
     <components>
-        <!-- Root Full Screen Overlay -->
         <flow-layout direction="vertical">
             <sizing>
                 <horizontal method="fill">100</horizontal>
@@ -15,7 +14,6 @@
             </surface>
 
             <children>
-                <!-- Main Popup Window -->
                 <flow-layout direction="horizontal">
                     <sizing>
                         <horizontal method="fixed">600</horizontal>
@@ -23,7 +21,6 @@
                     </sizing>
                     
                     <children>
-                        <!-- Left Sidebar (Categories) -->
                         <flow-layout direction="vertical">
                             <sizing>
                                 <horizontal method="fixed">150</horizontal>
@@ -64,7 +61,6 @@
                             </children>
                         </flow-layout>
 
-                        <!-- Right Main Content -->
                         <flow-layout direction="vertical">
                             <sizing>
                                 <horizontal method="fill">100</horizontal>
@@ -75,7 +71,6 @@
                             </surface>
 
                             <children>
-                                <!-- Header -->
                                 <flow-layout direction="horizontal">
                                     <sizing>
                                         <horizontal method="fill">100</horizontal>
@@ -92,7 +87,6 @@
                                     </children>
                                 </flow-layout>
 
-                                <!-- Scrollable Item List (Modules / Settings) -->
                                 <scroll direction="vertical">
                                     <flow-layout direction="vertical" id="content-list">
                                         <padding><all>15</all></padding>

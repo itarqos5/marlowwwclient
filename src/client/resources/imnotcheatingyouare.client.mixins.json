@@ -19,7 +19,8 @@
 "HandViewMixin",
 "FastPlaceMixin",
 "BlockBehaviourMixin",
-"MovementCorrectionMixin"
+"MovementCorrectionMixin",
+"EntityMixin"
 ],
 "injectors": {
 "defaultRequire": 1
